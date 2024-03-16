@@ -1,3 +1,116 @@
+# 518849455 (2024-03-16T22:29:35.693Z)
+
+{
+  "update_id": 518849455,
+  "message": {
+    "message_id": 462,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710628176,
+    "text": "/play",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 5,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
+# 518849454 (2024-03-16T22:29:11.663Z)
+
+{
+  "update_id": 518849454,
+  "callback_query": {
+    "id": "4137992064064571671",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 460,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710628150,
+      "text": "Welcome to HamsterAI Bot - your go-to destination for exhilarating hamster racing bets on Telegram! 🐹 Ready to place your bets? Click \"Play Now!\" to join the action. Experience the thrill of betting on your favorite hamsters in real-time. 🚀\n\nDive into the fun with two betting pools - bet on your champion hamster and join the excitement. All bets are pooled together, creating a big pot for the winners. 🏆\n\nGot questions or need assistance? Our dedicated support team is here to help you 24/7.\n\n🎰 Join our community, place your bets, and watch as the winning hamster brings you a fortune. Each race features 3 players and 3 pools - the winner takes the entire pot, minus a small tax, evenly split based on the bet amount. Don’t miss out, start betting now and may the best hamster win! 🐹💰",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Commands ❓",
+              "callback_data": "commands"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "commands"
+  }
+}
+
+# 518849453 (2024-03-16T22:29:08.857Z)
+
+{
+  "update_id": 518849453,
+  "message": {
+    "message_id": 459,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710628149,
+    "text": "/start",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 6,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
 # 518849408 (2024-03-16T00:50:28.760Z)
 
 {

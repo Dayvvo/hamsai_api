@@ -51,8 +51,13 @@ export class NestgramController {
   }
 
   @OnCommand('start')
-  async start(): Promise<string> {
-    return this.appService.helloWorldMessage;
+  async start() {
+    const message = this.appService.helloWorldMessage;
+
+    return new MessageSend(
+      message,
+      new Keyboard().btn('Commands ❓', 'commands'),
+    );
   }
 
   @OnCommand('new_race')
@@ -109,6 +114,14 @@ export class NestgramController {
     return new MessageSend('Not implemented!');
   }
 
+  @OnClick(/^commands/)
+  getCommands() {
+    const message =
+      '/create_wallet - Creates new wallet! \n/play - Lists available pools for betting. \n /deposit - Shows your wallet where you deposit funds!\n /balance - Shows your current balance \n /available_pools - Shows available pools! \n /withdraw - Sends funds to provided wallet';
+
+    return new MessageSend(message);
+  }
+
   @OnClick(/^play/)
   onPlay() {
     return new MessageSend('For placing bet, use /play command!');
@@ -120,7 +133,7 @@ export class NestgramController {
       ctx.message?.chat?.id ?? ctx.callback_query.message.chat.id;
     const game = await getGameData();
     const parsedPools = game.activePools.map((ac) => ({
-      name: `Pool ${ac.id}`,
+      name: `Hamsai ${ac.id}`,
       id: `pool_${ac.id}`,
     }));
     const message = new MessageSend(
