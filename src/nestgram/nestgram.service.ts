@@ -200,7 +200,12 @@ export class NestgramService implements OnModuleInit {
         poolsRecord,
       };
     } catch (error) {
-      console.log(error);
+      if (error.message.includes('0x1')) {
+        return {
+          message: 'Not enough balance. You can deposit with /deposit command!',
+          success: false,
+        };
+      }
       return { message: error.message, success: false };
       this.logger.error(error.message);
     }

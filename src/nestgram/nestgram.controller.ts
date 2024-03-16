@@ -57,7 +57,7 @@ export class NestgramController {
 
   @OnCommand('new_race')
   async startMission(message: any, @CommandParams() params: string[]) {
-    if (!ownersIds.some((o) => o === message.message.from?.id)) {
+    if (!ownersIds.some((o) => o === message.message.from?.username)) {
       return 'You are not permitted to execute this command!';
     }
     const duration = Number(params[0]);
