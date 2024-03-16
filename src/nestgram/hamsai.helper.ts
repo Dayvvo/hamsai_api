@@ -2,6 +2,7 @@ import { AnchorProvider, BN, Program, Wallet } from '@project-serum/anchor';
 import { Hamsai as HamsaiType, IDL } from '../pool_configurator/idl/hamsai';
 import {
   AccountMeta,
+  ComputeBudgetProgram,
   Connection,
   Keypair,
   PublicKey,
@@ -145,6 +146,9 @@ export async function sendAndConfirmTx(
   ix: TransactionInstruction[],
   signers?: Keypair[],
 ) {
+  ix.unshift(
+    ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 500000 }),
+  );
   const txMessage = new TransactionMessage({
     instructions: ix,
     payerKey: signers ? signers[0].publicKey : authority.publicKey,
