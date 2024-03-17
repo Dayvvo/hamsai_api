@@ -1,6 +1,8 @@
 import {
+  Answer,
   CommandParams,
   Controller,
+  GetAnswer,
   GetState,
   IMessage,
   Keyboard,
@@ -131,21 +133,25 @@ export class NestgramController {
   async play(ctx): Promise<any> {
     this.state.chatId =
       ctx.message?.chat?.id ?? ctx.callback_query.message.chat.id;
-    const game = await getGameData();
-    const parsedPools = game.activePools.map((ac) => ({
-      name: `Hamsai ${ac.id}`,
-      id: `pool_${ac.id}`,
-    }));
-    const message = new MessageSend(
-      'Choose a pool to bet in:',
-      new Keyboard(KeyboardTypes.underTheMessage),
-    );
+    try {
+      const game = await getGameData();
+      const parsedPools = game.activePools.map((ac) => ({
+        name: `Hamsai ${ac.id}`,
+        id: `pool_${ac.id}`,
+      }));
 
-    parsedPools.forEach((pp) => {
-      message.keyboard.btn(pp.name, pp.id);
-    });
+      const message = new MessageSend(
+        'Choose a pool to bet in:',
+        new Keyboard(KeyboardTypes.underTheMessage),
+      );
 
-    return message;
+      parsedPools.forEach((pp) => {
+        message.keyboard.btn(pp.name, pp.id);
+      });
+      return message;
+    } catch (error) {
+      return new MessageSend('Solana mainnet error!');
+    }
   }
 
   @OnCommand('withdraw')
@@ -201,13 +207,58 @@ export class NestgramController {
         .btn('0.5', `bet_${selectedPool}_0.5`)
         .btn('1', `bet_${selectedPool}_1`)
         .btn('1.5', `bet_${selectedPool}_1.5`)
-        .btn('2', `bet_${selectedPool}_2`),
+        .btn('2', `bet_${selectedPool}_2`)
+        .btn('Other', `bet_other`),
     );
   }
 
+  @OnCommand('bet')
+  async handleCustomBet(
+    @Message() mess: IMessage,
+    @CommandParams() commands: string[],
+  ) {
+    try {
+      const [amount, pool] = commands;
+      if (isNaN(+amount) || isNaN(+pool)) {
+        return new MessageSend('Invalid params!');
+      }
+
+      if (+pool < 1 || +pool > 5) {
+        return new MessageSend('Invalid Pool!');
+      }
+
+      const { message, success, signature, poolsRecord } =
+        await this.appService.handlePlaceBet(
+          mess.from.username,
+          +pool,
+          +amount,
+        );
+      const txLink = `https://solscan.io/tx/${signature}`;
+
+      let poolsInfo = 'Current pool amounts:\n';
+      if (poolsRecord)
+        for (const [poolId, poolAmount] of Object.entries(poolsRecord)) {
+          poolsInfo += `Pool ${poolId}: ${poolAmount}💰\n`;
+        }
+      if (success) {
+        return new MessageSend(
+          `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n\n${poolsRecord}`,
+        );
+      } else {
+        return new MessageSend(message);
+      }
+    } catch (error) {
+      console.log(error);
+      return new MessageSend(error.message);
+    }
+  }
+
   @OnClick(/^bet_/)
-  async chooseBetAmount(ctx): Promise<any> {
+  async chooseBetAmount(ctx, @GetAnswer() answer: Answer): Promise<any> {
     const betInfo = ctx.callback_query.data.split('_');
+    if (betInfo.includes('other')) {
+      return new MessageSend('For custom bet, type /bet {amount} {pool}');
+    }
     if (betInfo.length < 3) {
       return;
     }

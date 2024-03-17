@@ -1,9 +1,9 @@
-# 518849455 (2024-03-16T22:29:35.693Z)
+# 518849482 (2024-03-17T10:50:47.276Z)
 
 {
-  "update_id": 518849455,
+  "update_id": 518849482,
   "message": {
-    "message_id": 462,
+    "message_id": 497,
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -19,24 +19,123 @@
       "username": "gg97999",
       "type": "private"
     },
-    "date": 1710628176,
-    "text": "/play",
+    "date": 1710672648,
+    "text": "/bet 1 1",
     "entities": [
       {
         "offset": 0,
-        "length": 5,
+        "length": 4,
         "type": "bot_command"
       }
     ]
   }
 }
 
-# 518849454 (2024-03-16T22:29:11.663Z)
+# 518849481 (2024-03-17T10:50:07.278Z)
 
 {
-  "update_id": 518849454,
+  "update_id": 518849481,
+  "message": {
+    "message_id": 495,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710672608,
+    "text": "/bet 1 1",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 4,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
+# 518849480 (2024-03-17T10:49:46.666Z)
+
+{
+  "update_id": 518849480,
+  "message": {
+    "message_id": 493,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710672587,
+    "text": "/bet 2 2",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 4,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
+# 518849479 (2024-03-17T10:48:58.404Z)
+
+{
+  "update_id": 518849479,
+  "message": {
+    "message_id": 491,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710672539,
+    "text": "/bet 2 4",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 4,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
+# 518849478 (2024-03-17T10:48:52.327Z)
+
+{
+  "update_id": 518849478,
   "callback_query": {
-    "id": "4137992064064571671",
+    "id": "4137992063992036772",
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -46,7 +145,7 @@
       "language_code": "en"
     },
     "message": {
-      "message_id": 460,
+      "message_id": 489,
       "from": {
         "id": 7064107854,
         "is_bot": true,
@@ -60,163 +159,54 @@
         "username": "gg97999",
         "type": "private"
       },
-      "date": 1710628150,
-      "text": "Welcome to HamsterAI Bot - your go-to destination for exhilarating hamster racing bets on Telegram! 🐹 Ready to place your bets? Click \"Play Now!\" to join the action. Experience the thrill of betting on your favorite hamsters in real-time. 🚀\n\nDive into the fun with two betting pools - bet on your champion hamster and join the excitement. All bets are pooled together, creating a big pot for the winners. 🏆\n\nGot questions or need assistance? Our dedicated support team is here to help you 24/7.\n\n🎰 Join our community, place your bets, and watch as the winning hamster brings you a fortune. Each race features 3 players and 3 pools - the winner takes the entire pot, minus a small tax, evenly split based on the bet amount. Don’t miss out, start betting now and may the best hamster win! 🐹💰",
-      "reply_markup": {
-        "inline_keyboard": [
-          [
-            {
-              "text": "Commands ❓",
-              "callback_data": "commands"
-            }
-          ]
-        ]
-      }
-    },
-    "chat_instance": "2696435764436939867",
-    "data": "commands"
-  }
-}
-
-# 518849453 (2024-03-16T22:29:08.857Z)
-
-{
-  "update_id": 518849453,
-  "message": {
-    "message_id": 459,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710628149,
-    "text": "/start",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 6,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849408 (2024-03-16T00:50:28.760Z)
-
-{
-  "update_id": 518849408,
-  "message": {
-    "message_id": 399,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710550229,
-    "text": "/deposit",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 8,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849407 (2024-03-16T00:50:22.727Z)
-
-{
-  "update_id": 518849407,
-  "callback_query": {
-    "id": "4137992064864093629",
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "message": {
-      "message_id": 397,
-      "from": {
-        "id": 7064107854,
-        "is_bot": true,
-        "first_name": "hamsai_bot",
-        "username": "hamsai_bot"
-      },
-      "chat": {
-        "id": 5258418651,
-        "first_name": "Goran",
-        "last_name": "Gutovic",
-        "username": "gg97999",
-        "type": "private"
-      },
-      "date": 1710550222,
-      "text": "You've chosen Pool 2. Now, choose your bet amount.",
+      "date": 1710672532,
+      "text": "You've chosen Pool 5. Now, choose your bet amount.",
       "reply_markup": {
         "inline_keyboard": [
           [
             {
               "text": "0.05",
-              "callback_data": "bet_2_0.05"
+              "callback_data": "bet_5_0.05"
             },
             {
               "text": "0.1",
-              "callback_data": "bet_2_0.1"
+              "callback_data": "bet_5_0.1"
             },
             {
               "text": "0.5",
-              "callback_data": "bet_2_0.5"
+              "callback_data": "bet_5_0.5"
             },
             {
               "text": "1",
-              "callback_data": "bet_2_1"
+              "callback_data": "bet_5_1"
             },
             {
               "text": "1.5",
-              "callback_data": "bet_2_1.5"
+              "callback_data": "bet_5_1.5"
             },
             {
               "text": "2",
-              "callback_data": "bet_2_2"
+              "callback_data": "bet_5_2"
+            },
+            {
+              "text": "Other",
+              "callback_data": "bet_other"
             }
           ]
         ]
       }
     },
     "chat_instance": "2696435764436939867",
-    "data": "bet_2_0.1"
+    "data": "bet_other"
   }
 }
 
-# 518849406 (2024-03-16T00:50:21.900Z)
+# 518849477 (2024-03-17T10:48:51.184Z)
 
 {
-  "update_id": 518849406,
+  "update_id": 518849477,
   "callback_query": {
-    "id": "4137992062878801183",
+    "id": "4137992064424258075",
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -226,7 +216,7 @@
       "language_code": "en"
     },
     "message": {
-      "message_id": 396,
+      "message_id": 488,
       "from": {
         "id": 7064107854,
         "is_bot": true,
@@ -240,29 +230,29 @@
         "username": "gg97999",
         "type": "private"
       },
-      "date": 1710550222,
+      "date": 1710672530,
       "text": "Choose a pool to bet in:",
       "reply_markup": {
         "inline_keyboard": [
           [
             {
-              "text": "Pool 1",
+              "text": "Hamsai 1",
               "callback_data": "pool_1"
             },
             {
-              "text": "Pool 2",
+              "text": "Hamsai 2",
               "callback_data": "pool_2"
             },
             {
-              "text": "Pool 3",
+              "text": "Hamsai 3",
               "callback_data": "pool_3"
             },
             {
-              "text": "Pool 4",
+              "text": "Hamsai 4",
               "callback_data": "pool_4"
             },
             {
-              "text": "Pool 5",
+              "text": "Hamsai 5",
               "callback_data": "pool_5"
             }
           ]
@@ -270,16 +260,16 @@
       }
     },
     "chat_instance": "2696435764436939867",
-    "data": "pool_2"
+    "data": "pool_5"
   }
 }
 
-# 518849405 (2024-03-16T00:50:20.747Z)
+# 518849476 (2024-03-17T10:48:48.926Z)
 
 {
-  "update_id": 518849405,
+  "update_id": 518849476,
   "message": {
-    "message_id": 395,
+    "message_id": 487,
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -295,7 +285,7 @@
       "username": "gg97999",
       "type": "private"
     },
-    "date": 1710550221,
+    "date": 1710672529,
     "text": "/play",
     "entities": [
       {
@@ -307,12 +297,12 @@
   }
 }
 
-# 518849404 (2024-03-16T00:50:13.917Z)
+# 518849475 (2024-03-17T10:44:53.872Z)
 
 {
-  "update_id": 518849404,
+  "update_id": 518849475,
   "message": {
-    "message_id": 392,
+    "message_id": 485,
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -328,57 +318,24 @@
       "username": "gg97999",
       "type": "private"
     },
-    "date": 1710550214,
-    "text": "/new_race 30",
+    "date": 1710672294,
+    "text": "/bet 22",
     "entities": [
       {
         "offset": 0,
-        "length": 9,
+        "length": 4,
         "type": "bot_command"
       }
     ]
   }
 }
 
-# 518849403 (2024-03-16T00:50:10.922Z)
+# 518849474 (2024-03-17T10:44:49.996Z)
 
 {
-  "update_id": 518849403,
-  "message": {
-    "message_id": 390,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710550211,
-    "text": "/new_race",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 9,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849402 (2024-03-16T00:50:06.109Z)
-
-{
-  "update_id": 518849402,
+  "update_id": 518849474,
   "callback_query": {
-    "id": "4137992061578519567",
+    "id": "4137992062755617395",
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -388,7 +345,7 @@
       "language_code": "en"
     },
     "message": {
-      "message_id": 385,
+      "message_id": 482,
       "from": {
         "id": 7064107854,
         "is_bot": true,
@@ -402,7 +359,7 @@
         "username": "gg97999",
         "type": "private"
       },
-      "date": 1710550154,
+      "date": 1710672083,
       "text": "You've chosen Pool 1. Now, choose your bet amount.",
       "reply_markup": {
         "inline_keyboard": [
@@ -430,55 +387,26 @@
             {
               "text": "2",
               "callback_data": "bet_1_2"
+            },
+            {
+              "text": "Other",
+              "callback_data": "bet_other"
             }
           ]
         ]
       }
     },
     "chat_instance": "2696435764436939867",
-    "data": "bet_1_0.1"
+    "data": "bet_other"
   }
 }
 
-# 518849401 (2024-03-16T00:49:19.640Z)
+# 518849473 (2024-03-17T10:44:37.969Z)
 
 {
-  "update_id": 518849401,
-  "message": {
-    "message_id": 387,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710550160,
-    "text": "/balance",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 8,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849400 (2024-03-16T00:49:14.525Z)
-
-{
-  "update_id": 518849400,
+  "update_id": 518849473,
   "callback_query": {
-    "id": "4137992062030376627",
+    "id": "4137992061963115348",
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -488,7 +416,7 @@
       "language_code": "en"
     },
     "message": {
-      "message_id": 385,
+      "message_id": 482,
       "from": {
         "id": 7064107854,
         "is_bot": true,
@@ -502,7 +430,7 @@
         "username": "gg97999",
         "type": "private"
       },
-      "date": 1710550154,
+      "date": 1710672083,
       "text": "You've chosen Pool 1. Now, choose your bet amount.",
       "reply_markup": {
         "inline_keyboard": [
@@ -530,22 +458,26 @@
             {
               "text": "2",
               "callback_data": "bet_1_2"
+            },
+            {
+              "text": "Other",
+              "callback_data": "bet_other"
             }
           ]
         ]
       }
     },
     "chat_instance": "2696435764436939867",
-    "data": "bet_1_0.05"
+    "data": "bet_other"
   }
 }
 
-# 518849399 (2024-03-16T00:49:13.679Z)
+# 518849472 (2024-03-17T10:44:35.918Z)
 
 {
-  "update_id": 518849399,
+  "update_id": 518849472,
   "callback_query": {
-    "id": "4137992061286937262",
+    "id": "4137992061991784425",
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -555,7 +487,7 @@
       "language_code": "en"
     },
     "message": {
-      "message_id": 384,
+      "message_id": 482,
       "from": {
         "id": 7064107854,
         "is_bot": true,
@@ -569,29 +501,242 @@
         "username": "gg97999",
         "type": "private"
       },
-      "date": 1710550153,
+      "date": 1710672083,
+      "text": "You've chosen Pool 1. Now, choose your bet amount.",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "0.05",
+              "callback_data": "bet_1_0.05"
+            },
+            {
+              "text": "0.1",
+              "callback_data": "bet_1_0.1"
+            },
+            {
+              "text": "0.5",
+              "callback_data": "bet_1_0.5"
+            },
+            {
+              "text": "1",
+              "callback_data": "bet_1_1"
+            },
+            {
+              "text": "1.5",
+              "callback_data": "bet_1_1.5"
+            },
+            {
+              "text": "2",
+              "callback_data": "bet_1_2"
+            },
+            {
+              "text": "Other",
+              "callback_data": "bet_other"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "bet_1_1"
+  }
+}
+
+# 518849471 (2024-03-17T10:44:30.393Z)
+
+{
+  "update_id": 518849471,
+  "callback_query": {
+    "id": "4137992065197797573",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 482,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710672083,
+      "text": "You've chosen Pool 1. Now, choose your bet amount.",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "0.05",
+              "callback_data": "bet_1_0.05"
+            },
+            {
+              "text": "0.1",
+              "callback_data": "bet_1_0.1"
+            },
+            {
+              "text": "0.5",
+              "callback_data": "bet_1_0.5"
+            },
+            {
+              "text": "1",
+              "callback_data": "bet_1_1"
+            },
+            {
+              "text": "1.5",
+              "callback_data": "bet_1_1.5"
+            },
+            {
+              "text": "2",
+              "callback_data": "bet_1_2"
+            },
+            {
+              "text": "Other",
+              "callback_data": "bet_other"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "bet_other"
+  }
+}
+
+# 518849470 (2024-03-17T10:43:21.663Z)
+
+{
+  "update_id": 518849470,
+  "callback_query": {
+    "id": "4137992064485686197",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 482,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710672083,
+      "text": "You've chosen Pool 1. Now, choose your bet amount.",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "0.05",
+              "callback_data": "bet_1_0.05"
+            },
+            {
+              "text": "0.1",
+              "callback_data": "bet_1_0.1"
+            },
+            {
+              "text": "0.5",
+              "callback_data": "bet_1_0.5"
+            },
+            {
+              "text": "1",
+              "callback_data": "bet_1_1"
+            },
+            {
+              "text": "1.5",
+              "callback_data": "bet_1_1.5"
+            },
+            {
+              "text": "2",
+              "callback_data": "bet_1_2"
+            },
+            {
+              "text": "Other",
+              "callback_data": "bet_other"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "bet_other"
+  }
+}
+
+# 518849469 (2024-03-17T10:41:22.713Z)
+
+{
+  "update_id": 518849469,
+  "callback_query": {
+    "id": "4137992063218510589",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 481,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710672023,
       "text": "Choose a pool to bet in:",
       "reply_markup": {
         "inline_keyboard": [
           [
             {
-              "text": "Pool 1",
+              "text": "Hamsai 1",
               "callback_data": "pool_1"
             },
             {
-              "text": "Pool 2",
+              "text": "Hamsai 2",
               "callback_data": "pool_2"
             },
             {
-              "text": "Pool 3",
+              "text": "Hamsai 3",
               "callback_data": "pool_3"
             },
             {
-              "text": "Pool 4",
+              "text": "Hamsai 4",
               "callback_data": "pool_4"
             },
             {
-              "text": "Pool 5",
+              "text": "Hamsai 5",
               "callback_data": "pool_5"
             }
           ]
@@ -603,12 +748,12 @@
   }
 }
 
-# 518849398 (2024-03-16T00:49:12.465Z)
+# 518849467 (2024-03-17T10:40:22.124Z)
 
 {
-  "update_id": 518849398,
+  "update_id": 518849467,
   "message": {
-    "message_id": 383,
+    "message_id": 480,
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -624,7 +769,7 @@
       "username": "gg97999",
       "type": "private"
     },
-    "date": 1710550153,
+    "date": 1710672022,
     "text": "/play",
     "entities": [
       {
@@ -636,12 +781,12 @@
   }
 }
 
-# 518849397 (2024-03-16T00:49:10.744Z)
+# 518849466 (2024-03-17T10:38:48.545Z)
 
 {
-  "update_id": 518849397,
+  "update_id": 518849466,
   "callback_query": {
-    "id": "4137992063048014676",
+    "id": "4137992061218212537",
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -651,7 +796,7 @@
       "language_code": "en"
     },
     "message": {
-      "message_id": 381,
+      "message_id": 478,
       "from": {
         "id": 7064107854,
         "is_bot": true,
@@ -665,46 +810,46 @@
         "username": "gg97999",
         "type": "private"
       },
-      "date": 1710550150,
-      "text": "Welcome to HamsterAI Bot - your go-to destination for exhilarating hamster racing bets on Telegram! 🐹 Ready to place your bets? Click \"Play Now!\" to join the action. Experience the thrill of betting on your favorite hamsters in real-time. 🚀\n\nDive into the fun with two betting pools - bet on your champion hamster and join the excitement. All bets are pooled together, creating a big pot for the winners. 🏆\n\nGot questions or need assistance? Our dedicated support team is here to help you 24/7.\n\n🎰 Join our community, place your bets, and watch as the winning hamster brings you a fortune. Each race features 3 players and 3 pools - the winner takes the entire pot, minus a small tax, evenly split based on the bet amount. Don’t miss out, start betting now and may the best hamster win! 🐹💰",
+      "date": 1710671916,
+      "text": "Choose a pool to bet in:",
       "reply_markup": {
         "inline_keyboard": [
           [
             {
-              "text": "🎮 Play Now!",
-              "callback_data": "play"
-            }
-          ],
-          [
-            {
-              "text": "👥 Show pools",
-              "callback_data": "availablePools"
-            }
-          ],
-          [
-            {
-              "text": "❓ Help",
-              "callback_data": "help"
+              "text": "Hamsai 1",
+              "callback_data": "pool_1"
             },
             {
-              "text": "⚙️ Settings",
-              "callback_data": "settings"
+              "text": "Hamsai 2",
+              "callback_data": "pool_2"
+            },
+            {
+              "text": "Hamsai 3",
+              "callback_data": "pool_3"
+            },
+            {
+              "text": "Hamsai 4",
+              "callback_data": "pool_4"
+            },
+            {
+              "text": "Hamsai 5",
+              "callback_data": "pool_5"
             }
           ]
         ]
       }
     },
     "chat_instance": "2696435764436939867",
-    "data": "play"
+    "data": "pool_4"
   }
 }
 
-# 518849396 (2024-03-16T00:49:09.389Z)
+# 518849465 (2024-03-17T10:38:35.157Z)
 
 {
-  "update_id": 518849396,
+  "update_id": 518849465,
   "message": {
-    "message_id": 380,
+    "message_id": 477,
     "from": {
       "id": 5258418651,
       "is_bot": false,
@@ -720,111 +865,12 @@
       "username": "gg97999",
       "type": "private"
     },
-    "date": 1710550150,
-    "text": "/start",
+    "date": 1710671916,
+    "text": "/play",
     "entities": [
       {
         "offset": 0,
-        "length": 6,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849395 (2024-03-16T00:49:04.913Z)
-
-{
-  "update_id": 518849395,
-  "message": {
-    "message_id": 377,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710550145,
-    "text": "/new_race 30",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 9,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849394 (2024-03-16T00:49:01.471Z)
-
-{
-  "update_id": 518849394,
-  "message": {
-    "message_id": 375,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710550142,
-    "text": "/new_race",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 9,
-        "type": "bot_command"
-      }
-    ]
-  }
-}
-
-# 518849393 (2024-03-16T00:45:53.768Z)
-
-{
-  "update_id": 518849393,
-  "message": {
-    "message_id": 373,
-    "from": {
-      "id": 5258418651,
-      "is_bot": false,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "language_code": "en"
-    },
-    "chat": {
-      "id": 5258418651,
-      "first_name": "Goran",
-      "last_name": "Gutovic",
-      "username": "gg97999",
-      "type": "private"
-    },
-    "date": 1710549954,
-    "text": "/balance",
-    "entities": [
-      {
-        "offset": 0,
-        "length": 8,
+        "length": 5,
         "type": "bot_command"
       }
     ]
