@@ -170,12 +170,16 @@ export class NestgramController {
       return;
     }
 
+    const poolsNames: string[] = ['THEO', 'CHARLOTTE', 'BANKSY', 'CK', 'POOKY'];
+
     const selectedPool = match[1];
 
     this.state.selectedPool = selectedPool; // Storing selected pool in state
 
     return new MessageSend(
-      `You've chosen Pool ${selectedPool}. Now, choose your bet amount.`,
+      `You've chosen ${
+        poolsNames[+selectedPool - 1]
+      }. Now, choose your bet amount.`,
       new Keyboard(KeyboardTypes.underTheMessage)
         .row(2)
         .btn('0.05', `bet_${selectedPool}_0.05`)
@@ -225,9 +229,16 @@ export class NestgramController {
       const txLink = `https://solscan.io/tx/${signature}`;
 
       let poolsInfo = 'Current pool amounts:\n';
+      const poolsNames: string[] = [
+        'THEO',
+        'CHARLOTTE',
+        'BANKSY',
+        'CK',
+        'POOKY',
+      ];
       if (poolsRecord)
         for (const [poolId, poolAmount] of Object.entries(poolsRecord)) {
-          poolsInfo += `Pool ${poolId}: ${poolAmount}💰\n`;
+          poolsInfo += `Pool ${poolsNames[poolId]}: ${poolAmount}💰\n`;
         }
       if (success) {
         return new MessageSend(
@@ -478,9 +489,16 @@ export class NestgramController {
     this.state.chatId =
       ctx.message?.chat?.id ?? ctx.callback_query.message.chat.id;
     try {
+      const poolsNames: string[] = [
+        'THEO',
+        'CHARLOTTE',
+        'BANKSY',
+        'CK',
+        'POOKY',
+      ];
       const game = await getGameData();
-      const parsedPools = game.activePools.map((ac) => ({
-        name: `Hamsai ${ac.id}`,
+      const parsedPools = game.activePools.map((ac, index) => ({
+        name: `${poolsNames[index]}`,
         id: `pool_${ac.id}`,
       }));
 
