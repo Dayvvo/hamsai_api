@@ -419,7 +419,7 @@ export class NestgramController {
 
     if (!command) {
       return new MessageSend(
-        'Send command in form /withdraw "WalletString","Amount"',
+        'Send command in form /withdraw "WalletString","Amount"\n Example: /withdraw F8Miyagb9XCt13NjKgVBsNRsJNv1sNxL2qHURFXzVNKo,2.25',
       );
     }
 
