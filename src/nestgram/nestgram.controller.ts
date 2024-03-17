@@ -146,7 +146,7 @@ export class NestgramController {
       );
 
       parsedPools.forEach((pp) => {
-        message.keyboard.btn(pp.name, pp.id);
+        message.keyboard.row(2).btn(pp.name, pp.id);
       });
       return message;
     } catch (error) {
@@ -202,12 +202,16 @@ export class NestgramController {
     return new MessageSend(
       `You've chosen Pool ${selectedPool}. Now, choose your bet amount.`,
       new Keyboard(KeyboardTypes.underTheMessage)
+        .row(2)
         .btn('0.05', `bet_${selectedPool}_0.05`)
         .btn('0.1', `bet_${selectedPool}_0.1`)
+        .row(2)
         .btn('0.5', `bet_${selectedPool}_0.5`)
         .btn('1', `bet_${selectedPool}_1`)
+        .row(2)
         .btn('1.5', `bet_${selectedPool}_1.5`)
         .btn('2', `bet_${selectedPool}_2`)
+        .row(2)
         .btn('Other', `bet_other`),
     );
   }
