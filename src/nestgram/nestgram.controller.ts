@@ -51,6 +51,10 @@ export class NestgramController {
   async createNewWallet(@Message() message: IMessage) {
     return await this.appService.createWalletMessage(message);
   }
+  @OnClick(/^create_wallet/)
+  async createNewWalletBtn(@Message() message: IMessage) {
+    return await this.appService.createWalletMessage(message);
+  }
 
   @OnCommand('start')
   async start() {
@@ -58,7 +62,20 @@ export class NestgramController {
 
     return new MessageSend(
       message,
-      new Keyboard().btn('Commands ❓', 'commands'),
+      new Keyboard()
+        .row(2)
+        .btn('Commands ❓', 'commands')
+        .btn('Create Wallet 💼', 'create_wallet')
+        .row(2)
+        .btn('Deposit 💰', 'deposit')
+        .btn('Withdraw 💸', 'withdraw')
+        .row(2)
+        .btn('My Wallet 💳', 'my_wallet')
+        .btn('Play 🎰', 'play')
+        .row(2)
+        .btn('Available Pools 🎯', 'available_pools')
+        .btn('Export private key 🗝', 'export_private_key')
+        .row(2),
     );
   }
 
@@ -80,30 +97,23 @@ export class NestgramController {
   }
 
   @OnCommand('balance')
-  async getBalance(@Message() message: IMessage) {
-    try {
-      const user = await UserModel.findOne({ username: message.from.username });
-      if (!user) {
-        return new MessageSend('You still have not created wallet!');
-      }
+  handleBalance(@Message() message: IMessage) {
+    return this.getBalance(message);
+  }
 
-      const balance =
-        (await connection.getBalance(new PublicKey(user.walletPubkey))) /
-        LAMPORTS_PER_SOL;
-
-      return new MessageSend(`Balance: ${balance} 💸`);
-    } catch (error) {
-      return new MessageSend('Failed to fetch balance!');
-    }
+  @OnClick(/^balance/)
+  handleBalanceBtn(@Message() message: IMessage) {
+    return this.getBalance(message);
   }
 
   @OnCommand('deposit')
-  async getDepositWallet(@Message() message: IMessage) {
-    const user = await UserModel.findOne({ username: message.from.username });
-    if (!user) {
-      return 'You havent created wallet yet! Please create one with /create_wallet command';
-    }
-    return `You can deposit funds to ${user.walletPubkey}`;
+  handleDepositCommand(@Message() message: IMessage) {
+    return this.getDepositWallet(message);
+  }
+
+  @OnClick(/^deposit/)
+  handleDepositCommandBtn(@Message() message: IMessage) {
+    return this.getDepositWallet(message);
   }
 
   @OnClick(/^settings/)
@@ -119,73 +129,38 @@ export class NestgramController {
   @OnClick(/^commands/)
   getCommands() {
     const message =
-      '/create_wallet - Creates new wallet! \n/play - Lists available pools for betting. \n /deposit - Shows your wallet where you deposit funds!\n /balance - Shows your current balance \n /available_pools - Shows available pools! \n /withdraw - Sends funds to provided wallet';
+      '/create_wallet - Creates new wallet! \n/play - Lists available pools for betting. \n /deposit - Shows your where you deposit funds!\n /balance - Shows your current balance \n /available_pools - Shows available pools! \n /withdraw - Sends funds to provided wallet \n /export_private_key - Shows you your private key!';
 
     return new MessageSend(message);
   }
 
-  @OnClick(/^play/)
-  onPlay() {
-    return new MessageSend('For placing bet, use /play command!');
+  @OnCommand('play')
+  handlePlay(ctx) {
+    return this.play(ctx);
   }
 
-  @OnCommand('play')
-  async play(ctx): Promise<any> {
-    this.state.chatId =
-      ctx.message?.chat?.id ?? ctx.callback_query.message.chat.id;
-    try {
-      const game = await getGameData();
-      const parsedPools = game.activePools.map((ac) => ({
-        name: `Hamsai ${ac.id}`,
-        id: `pool_${ac.id}`,
-      }));
-
-      const message = new MessageSend(
-        'Choose a pool to bet in:',
-        new Keyboard(KeyboardTypes.underTheMessage),
-      );
-
-      parsedPools.forEach((pp) => {
-        message.keyboard.row(2).btn(pp.name, pp.id);
-      });
-      return message;
-    } catch (error) {
-      return new MessageSend('Solana mainnet error!');
-    }
+  @OnClick(/^play/)
+  handlePlayBtn(ctx) {
+    return this.play(ctx);
   }
 
   @OnCommand('withdraw')
-  async withdrawFunds(
+  handleWithdrawCommand(
     @Message() message: IMessage,
     @CommandParams() params: string[],
   ) {
-    const [wallet, amount] = params;
-
-    if (isNaN(+amount)) {
-      return new MessageSend(
-        'Invalid withdraw amount! Send command in form /withdraw {wallet} {amount}',
-      );
-    }
-
-    const {
-      message: responseMessage,
-      sig,
-      success,
-    } = await this.appService.withdrawFunds(
-      message.from.username,
-      +amount,
-      wallet,
-    );
-
-    if (success) {
-      const txLink = `https://solscan.io/tx/${sig}`;
-
-      return new MessageSend(responseMessage).next(txLink);
-    } else {
-      return new MessageSend(responseMessage);
-    }
+    return this.withdrawFunds(message, params);
   }
 
+  @OnClick(/^withdraw/)
+  handleWithdrawCommandBtn(
+    @Message() message: IMessage,
+    @CommandParams() params: string[],
+  ) {
+    return new MessageSend(
+      'Send command in form /withdraw "WalletString","Amount"',
+    );
+  }
   @OnClick(/^pool/)
   async choosePool(ctx): Promise<any> {
     const pool = ctx.callback_query.data;
@@ -214,6 +189,16 @@ export class NestgramController {
         .row(2)
         .btn('Other', `bet_other`),
     );
+  }
+
+  @OnCommand('export_private_key')
+  handleExportPkCommand(@Message() message: IMessage) {
+    return this.handleExportPk(message);
+  }
+
+  @OnClick(/^export_private_key/)
+  handleExportPkBtn(@Message() message: IMessage) {
+    return this.handleExportPk(message);
   }
 
   @OnCommand('bet')
@@ -291,16 +276,17 @@ export class NestgramController {
     }
   }
 
-  @OnClick('availablePools')
+  @OnClick(/^available_pools/)
   async showAvailablePools(ctx): Promise<any> {
     // Assuming you have a function to get the current pool amounts
     const poolAmounts = {};
     const gameData = await getGameData();
     await Promise.all(
       gameData.activePools.map(async (ac) => {
-        const treas = await connection.getBalance(getTreasurySeed(ac.id));
-
-        poolAmounts[ac.id.toString()] = (treas / LAMPORTS_PER_SOL).toString();
+        try {
+          const treas = await connection.getBalance(getTreasurySeed(ac.id));
+          poolAmounts[ac.id.toString()] = (treas / LAMPORTS_PER_SOL).toString();
+        } catch (error) {}
       }),
     );
     let messageText =
@@ -333,6 +319,22 @@ export class NestgramController {
         'availablePools',
       ),
     );
+  }
+
+  @OnClick(/^my_wallet/)
+  async getMyWallet(@Message() message: IMessage) {
+    try {
+      const user = await UserModel.findOne({ username: message.from.username });
+      if (!user) {
+        return new MessageSend(
+          'You still have not created wallet. You can create one with /create_wallet command!',
+        );
+      }
+
+      return new MessageSend(
+        `Your wallet address is: <b>${user.walletPubkey}</b>`,
+      );
+    } catch (error) {}
   }
 
   @OnClick(/^confirm_/)
@@ -381,6 +383,23 @@ export class NestgramController {
     return txLink;
   }
 
+  async getBalance(@Message() message: IMessage) {
+    try {
+      const user = await UserModel.findOne({ username: message.from.username });
+      if (!user) {
+        return new MessageSend('You still have not created wallet!');
+      }
+
+      const balance =
+        (await connection.getBalance(new PublicKey(user.walletPubkey))) /
+        LAMPORTS_PER_SOL;
+
+      return new MessageSend(`Balance: ${balance} 💸`);
+    } catch (error) {
+      return new MessageSend('Failed to fetch balance!');
+    }
+  }
+
   async getPoolDetails(poolId) {
     // Fetch and return details for the specified pool from your database or backend
     // This is a placeholder implementation. You'll need to replace it with actual data retrieval logic.
@@ -390,5 +409,95 @@ export class NestgramController {
       minBet: '0.05',
       maxBet: '2.00',
     };
+  }
+
+  async withdrawFunds(
+    @Message() message: IMessage,
+    @CommandParams() params: string[],
+  ) {
+    const [command] = params;
+
+    if (!command) {
+      return new MessageSend(
+        'Send command in form /withdraw "WalletString","Amount"',
+      );
+    }
+
+    const [wallet, amount] = command.split(',');
+
+    if (isNaN(+amount)) {
+      return new MessageSend(
+        'Send command in form /withdraw "WalletString","Amount"',
+      );
+    }
+
+    const {
+      message: responseMessage,
+      sig,
+      success,
+    } = await this.appService.withdrawFunds(
+      message.from.username,
+      +amount,
+      wallet,
+    );
+
+    if (success) {
+      const txLink = `https://solscan.io/tx/${sig}`;
+
+      return new MessageSend(responseMessage).next(txLink);
+    } else {
+      return new MessageSend(responseMessage);
+    }
+  }
+
+  async handleExportPk(@Message() message: IMessage) {
+    try {
+      const user = await UserModel.findOne({ username: message.from.username });
+      if (!user) {
+        return new MessageSend(
+          'You still have not created wallet! You can create one with /create_wallet command!',
+        );
+      }
+
+      return new MessageSend(
+        `Your private key is: <b>${user.walletKeypair}</b>`,
+      );
+    } catch (error) {
+      return new MessageSend(error.message);
+    }
+  }
+
+  async getDepositWallet(@Message() message: IMessage) {
+    const user = await UserModel.findOne({ username: message.from.username });
+    if (!user) {
+      return 'You havent created wallet yet! Please create one with /create_wallet command';
+    }
+    return `You can deposit funds to ${user.walletPubkey}`;
+  }
+  async play(ctx): Promise<any> {
+    this.state.chatId =
+      ctx.message?.chat?.id ?? ctx.callback_query.message.chat.id;
+    try {
+      const game = await getGameData();
+      const parsedPools = game.activePools.map((ac) => ({
+        name: `Hamsai ${ac.id}`,
+        id: `pool_${ac.id}`,
+      }));
+
+      const message = new MessageSend(
+        'Choose a pool to bet in:',
+        new Keyboard(KeyboardTypes.underTheMessage),
+      );
+
+      parsedPools.forEach((pp, index) => {
+        message.keyboard.btn(pp.name, pp.id);
+        if (index % 2 !== 0) {
+          message.keyboard.row(2);
+        }
+      });
+      return message;
+    } catch (error) {
+      return new MessageSend('Solana mainnet error!');
+    }
   }
 }
