@@ -158,7 +158,7 @@ export class NestgramController {
     @CommandParams() params: string[],
   ) {
     return new MessageSend(
-      'Send command in form /withdraw "WalletString","Amount"',
+      'Send command in form /withdraw "WalletString","Amount" \n Example: /withdraw F8Miyagb9XCt13NjKgVBsNRsJNv1sNxL2qHURFXzVNKo,2.25',
     );
   }
   @OnClick(/^pool/)
@@ -427,7 +427,7 @@ export class NestgramController {
 
     if (isNaN(+amount)) {
       return new MessageSend(
-        'Send command in form /withdraw "WalletString","Amount"',
+        'Send command in form /withdraw "WalletString","Amount"\n Example: /withdraw F8Miyagb9XCt13NjKgVBsNRsJNv1sNxL2qHURFXzVNKo,2.25',
       );
     }
 
