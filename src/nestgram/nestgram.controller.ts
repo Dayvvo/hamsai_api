@@ -243,7 +243,7 @@ export class NestgramController {
         }
       if (success) {
         return new MessageSend(
-          `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n\n${poolsRecord}`,
+          `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
         );
       } else {
         return new MessageSend(message);
@@ -283,7 +283,7 @@ export class NestgramController {
       }
     if (success) {
       return new MessageSend(
-        `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n\n${poolsRecord}`,
+        `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
       );
     } else {
       return new MessageSend(message);
@@ -377,7 +377,7 @@ export class NestgramController {
     }
 
     return new MessageSend(
-      `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n\n${poolsInfo}`,
+      `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
     );
   }
   @OnCommand('')
