@@ -1,3 +1,95 @@
+# 574104079 (2024-03-18T21:01:02.581Z)
+
+{
+  "update_id": 574104079,
+  "message": {
+    "message_id": 137,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710795663,
+    "text": "/new_race 50",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 9,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
+# 574104078 (2024-03-18T21:00:49.884Z)
+
+{
+  "update_id": 574104078,
+  "message": {
+    "message_id": 136,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710795650,
+    "text": "new_race 50"
+  }
+}
+
+# 574104077 (2024-03-18T20:59:55.443Z)
+
+{
+  "update_id": 574104077,
+  "message": {
+    "message_id": 133,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710795596,
+    "text": "/new_race 30",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 9,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
 # 574104076 (2024-03-18T20:51:34.186Z)
 
 {

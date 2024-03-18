@@ -66,6 +66,12 @@ export class PoolConfiguratorService {
 
       if (gameData.players.length === 0) {
         this.logger.warn('Found on-chain game with 0 entries!');
+
+        if (isEnded) {
+          game.gameStatus = GameStatus.Paused;
+          this.logger.log('Storing ended game');
+          await this.redisService.set(this.redisGameKey, JSON.stringify(game));
+        }
         return;
       }
 
