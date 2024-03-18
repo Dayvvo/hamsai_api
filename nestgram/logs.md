@@ -1,3 +1,304 @@
+# 518849591 (2024-03-17T18:32:06.423Z)
+
+{
+  "update_id": 518849591,
+  "callback_query": {
+    "id": "4137992062792049257",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 643,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710700319,
+      "text": "Choose a pool to bet in:",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "THEO",
+              "callback_data": "pool_1"
+            },
+            {
+              "text": "CHARLOTTE",
+              "callback_data": "pool_2"
+            }
+          ],
+          [
+            {
+              "text": "BANKSY",
+              "callback_data": "pool_3"
+            },
+            {
+              "text": "CK",
+              "callback_data": "pool_4"
+            }
+          ],
+          [
+            {
+              "text": "POOKY",
+              "callback_data": "pool_5"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "pool_3"
+  }
+}
+
+# 518849590 (2024-03-17T18:32:03.310Z)
+
+{
+  "update_id": 518849590,
+  "callback_query": {
+    "id": "4137992062328727484",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 643,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710700319,
+      "text": "Choose a pool to bet in:",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "THEO",
+              "callback_data": "pool_1"
+            },
+            {
+              "text": "CHARLOTTE",
+              "callback_data": "pool_2"
+            }
+          ],
+          [
+            {
+              "text": "BANKSY",
+              "callback_data": "pool_3"
+            },
+            {
+              "text": "CK",
+              "callback_data": "pool_4"
+            }
+          ],
+          [
+            {
+              "text": "POOKY",
+              "callback_data": "pool_5"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "pool_2"
+  }
+}
+
+# 518849589 (2024-03-17T18:32:01.075Z)
+
+{
+  "update_id": 518849589,
+  "callback_query": {
+    "id": "4137992061897938975",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 643,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710700319,
+      "text": "Choose a pool to bet in:",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "THEO",
+              "callback_data": "pool_1"
+            },
+            {
+              "text": "CHARLOTTE",
+              "callback_data": "pool_2"
+            }
+          ],
+          [
+            {
+              "text": "BANKSY",
+              "callback_data": "pool_3"
+            },
+            {
+              "text": "CK",
+              "callback_data": "pool_4"
+            }
+          ],
+          [
+            {
+              "text": "POOKY",
+              "callback_data": "pool_5"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "pool_1"
+  }
+}
+
+# 518849588 (2024-03-17T18:31:59.379Z)
+
+{
+  "update_id": 518849588,
+  "callback_query": {
+    "id": "4137992062530187581",
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "message": {
+      "message_id": 643,
+      "from": {
+        "id": 7064107854,
+        "is_bot": true,
+        "first_name": "hamsai_bot",
+        "username": "hamsai_bot"
+      },
+      "chat": {
+        "id": 5258418651,
+        "first_name": "Goran",
+        "last_name": "Gutovic",
+        "username": "gg97999",
+        "type": "private"
+      },
+      "date": 1710700319,
+      "text": "Choose a pool to bet in:",
+      "reply_markup": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "THEO",
+              "callback_data": "pool_1"
+            },
+            {
+              "text": "CHARLOTTE",
+              "callback_data": "pool_2"
+            }
+          ],
+          [
+            {
+              "text": "BANKSY",
+              "callback_data": "pool_3"
+            },
+            {
+              "text": "CK",
+              "callback_data": "pool_4"
+            }
+          ],
+          [
+            {
+              "text": "POOKY",
+              "callback_data": "pool_5"
+            }
+          ]
+        ]
+      }
+    },
+    "chat_instance": "2696435764436939867",
+    "data": "pool_5"
+  }
+}
+
+# 518849587 (2024-03-17T18:31:58.185Z)
+
+{
+  "update_id": 518849587,
+  "message": {
+    "message_id": 642,
+    "from": {
+      "id": 5258418651,
+      "is_bot": false,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "language_code": "en"
+    },
+    "chat": {
+      "id": 5258418651,
+      "first_name": "Goran",
+      "last_name": "Gutovic",
+      "username": "gg97999",
+      "type": "private"
+    },
+    "date": 1710700319,
+    "text": "/play",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 5,
+        "type": "bot_command"
+      }
+    ]
+  }
+}
+
 # 518849586 (2024-03-17T18:31:47.887Z)
 
 {
