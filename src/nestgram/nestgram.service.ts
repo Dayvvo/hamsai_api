@@ -28,6 +28,7 @@ import {
   getPlaceBet,
   getStartMission,
   getTreasurySeed,
+  hamsaiProgram,
   sendAndConfirmTx,
 } from './hamsai.helper';
 import { Logger, OnModuleInit } from '@nestjs/common';
@@ -36,6 +37,7 @@ import * as nacl from 'tweetnacl';
 import { passphrase } from './env';
 import mongoose from 'mongoose';
 import { decode, encode } from 'bs58';
+import { AnchorError } from '@project-serum/anchor';
 config();
 
 @Service()
@@ -116,8 +118,8 @@ export class NestgramService implements OnModuleInit {
     );
   }
 
-  async createWalletMessage(message: IMessage) {
-    const user = await UserModel.findOne({ username: message.from.username });
+  async createWalletMessage(username: string) {
+    const user = await UserModel.findOne({ username: username });
 
     if (user) {
       return 'You already created wallet. Public Key: ' + user.walletPubkey;
@@ -130,7 +132,7 @@ export class NestgramService implements OnModuleInit {
     await UserModel.create({
       totalBets: 0,
       totalEarnings: 0,
-      username: message.from.username,
+      username: username,
       walletKeypair: secretKey,
       walletPubkey: newWallet.publicKey.toString(),
     });
@@ -155,7 +157,6 @@ export class NestgramService implements OnModuleInit {
       const kp = Keypair.fromSecretKey(decode(user.walletKeypair));
       const gameData = await getGameData();
 
-      console.log(gameData);
       if (
         gameData.players.some((p) => p.user.toString() === user.walletPubkey)
       ) {
@@ -169,13 +170,14 @@ export class NestgramService implements OnModuleInit {
         return { success: false, message: 'Entries cap reached!' };
       }
 
-      if (
-        dayjs
-          .unix(gameData.startedAt.toNumber() + gameData.duration.toNumber())
-          .isBefore(dayjs())
-      ) {
-        return { success: false, message: 'Race has ended!' };
-      }
+      console.log(dayjs.unix(gameData.startedAt.toNumber()).toDate());
+      // if (
+      //   dayjs
+      //     .unix(gameData.startedAt.toNumber() + gameData.duration.toNumber())
+      //     .isBefore(dayjs())
+      // ) {
+      //   return { success: false, message: 'Race has ended!' };
+      // }
 
       const placeBetIx = await getPlaceBet(
         kp.publicKey,
@@ -202,14 +204,15 @@ export class NestgramService implements OnModuleInit {
         poolsRecord,
       };
     } catch (error) {
-      if (error.message.includes('0x1')) {
-        return {
-          message: 'Not enough balance. You can deposit with /deposit command!',
-          success: false,
-        };
+      if (error instanceof AnchorError) {
+        const err: AnchorError = error;
+        return { success: false, message: err.message };
+      } else {
+        if (error.message.includes('0x1774')) {
+          return { success: false, message: 'Race expired' };
+        }
+        return { success: false, message: error.message };
       }
-      return { message: error.message, success: false };
-      this.logger.error(error.message);
     }
   }
 

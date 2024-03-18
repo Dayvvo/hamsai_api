@@ -49,11 +49,12 @@ export class NestgramController {
 
   @OnCommand('create_wallet')
   async createNewWallet(@Message() message: IMessage) {
-    return await this.appService.createWalletMessage(message);
+    return await this.appService.createWalletMessage(message.from.username);
   }
   @OnClick(/^create_wallet/)
   async createNewWalletBtn(@Message() message: IMessage) {
-    return await this.appService.createWalletMessage(message);
+    console.log(message);
+    return await this.appService.createWalletMessage(message.chat.username);
   }
 
   @OnCommand('start')
@@ -98,22 +99,22 @@ export class NestgramController {
 
   @OnCommand('balance')
   handleBalance(@Message() message: IMessage) {
-    return this.getBalance(message);
+    return this.getBalance(message.from.username);
   }
 
   @OnClick(/^balance/)
   handleBalanceBtn(@Message() message: IMessage) {
-    return this.getBalance(message);
+    return this.getBalance(message.chat.username);
   }
 
   @OnCommand('deposit')
   handleDepositCommand(@Message() message: IMessage) {
-    return this.getDepositWallet(message);
+    return this.getDepositWallet(message.from.username);
   }
 
   @OnClick(/^deposit/)
   handleDepositCommandBtn(@Message() message: IMessage) {
-    return this.getDepositWallet(message);
+    return this.getDepositWallet(message.chat.username);
   }
 
   @OnClick(/^settings/)
@@ -197,12 +198,12 @@ export class NestgramController {
 
   @OnCommand('export_private_key')
   handleExportPkCommand(@Message() message: IMessage) {
-    return this.handleExportPk(message);
+    return this.handleExportPk(message.from.username);
   }
 
   @OnClick(/^export_private_key/)
   handleExportPkBtn(@Message() message: IMessage) {
-    return this.handleExportPk(message);
+    return this.handleExportPk(message.chat.username);
   }
 
   @OnCommand('bet')
@@ -257,7 +258,9 @@ export class NestgramController {
   async chooseBetAmount(ctx, @GetAnswer() answer: Answer): Promise<any> {
     const betInfo = ctx.callback_query.data.split('_');
     if (betInfo.includes('other')) {
-      return new MessageSend('For custom bet, type /bet {amount} {pool}');
+      return new MessageSend(
+        'For custom bet, type /bet {amount} {pool_id (1-5)}',
+      );
     }
     if (betInfo.length < 3) {
       return;
@@ -335,7 +338,7 @@ export class NestgramController {
   @OnClick(/^my_wallet/)
   async getMyWallet(@Message() message: IMessage) {
     try {
-      const user = await UserModel.findOne({ username: message.from.username });
+      const user = await UserModel.findOne({ username: message.chat.username });
       if (!user) {
         return new MessageSend(
           'You still have not created wallet. You can create one with /create_wallet command!',
@@ -394,9 +397,9 @@ export class NestgramController {
     return txLink;
   }
 
-  async getBalance(@Message() message: IMessage) {
+  async getBalance(@Message() username: string) {
     try {
-      const user = await UserModel.findOne({ username: message.from.username });
+      const user = await UserModel.findOne({ username: username });
       if (!user) {
         return new MessageSend('You still have not created wallet!');
       }
@@ -461,9 +464,9 @@ export class NestgramController {
     }
   }
 
-  async handleExportPk(@Message() message: IMessage) {
+  async handleExportPk(@Message() username: string) {
     try {
-      const user = await UserModel.findOne({ username: message.from.username });
+      const user = await UserModel.findOne({ username: username });
       if (!user) {
         return new MessageSend(
           'You still have not created wallet! You can create one with /create_wallet command!',
@@ -478,8 +481,8 @@ export class NestgramController {
     }
   }
 
-  async getDepositWallet(@Message() message: IMessage) {
-    const user = await UserModel.findOne({ username: message.from.username });
+  async getDepositWallet(@Message() username: string) {
+    const user = await UserModel.findOne({ username: username });
     if (!user) {
       return 'You havent created wallet yet! Please create one with /create_wallet command';
     }
