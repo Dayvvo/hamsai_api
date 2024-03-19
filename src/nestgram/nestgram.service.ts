@@ -89,6 +89,7 @@ export class NestgramService implements OnModuleInit {
       }
       game.createdAt = dayjs().unix();
       game.endsAt = dayjs().add(duration, 'seconds').unix();
+      game.gameStatus = GameStatus.Active;
       const ix = await getStartMission(duration);
 
       const sig = await sendAndConfirmTx([ix]);
