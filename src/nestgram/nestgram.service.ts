@@ -108,7 +108,7 @@ export class NestgramService implements OnModuleInit {
       'Welcome to HamsterAI Bot - your go-to destination for exhilarating hamster racing bets on Telegram! 🐹 Ready to place your bets? Click "Play Now!" to join the action. Experience the thrill of betting on your favorite hamsters in real-time. 🚀\n\n' +
         'Dive into the fun with two betting pools - bet on your champion hamster and join the excitement. All bets are pooled together, creating a big pot for the winners. 🏆\n\n' +
         'Got questions or need assistance? Our dedicated support team is here to help you 24/7.\n\n' +
-        '🎰 Join our community, place your bets, and watch as the winning hamster brings you a fortune. Each race features 3 players and 3 pools - the winner takes the entire pot, minus a small tax, evenly split based on the bet amount. Don’t miss out, start betting now and may the best hamster win! 🐹💰',
+        '🎰 Join our community, place your bets, and watch as the winning hamster brings you a fortune. Each race features 5 pools - the winner takes the entire pot, minus a small tax, evenly split based on the bet amount. Don’t miss out, start betting now and may the best hamster win! 🐹💰',
       new Keyboard(KeyboardTypes.underTheMessage)
         .btn('🎮 Play Now!', 'play')
         .row()
