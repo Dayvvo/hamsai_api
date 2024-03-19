@@ -147,7 +147,7 @@ export async function sendAndConfirmTx(
   signers?: Keypair[],
 ) {
   ix.unshift(
-    ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 500000 }),
+    ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 5000000 }),
   );
   const txMessage = new TransactionMessage({
     instructions: ix,
