@@ -171,7 +171,13 @@ export class NestgramController {
       return;
     }
 
-    const poolsNames: string[] = ['THEO', 'CHARLOTTE', 'BANKSY', 'CK', 'POOKY'];
+    const poolsNames: string[] = [
+      'THEO',
+      'CHARLOTTE',
+      'BANKSY',
+      'CK',
+      'POOKIE',
+    ];
 
     const selectedPool = match[1];
 
@@ -235,7 +241,7 @@ export class NestgramController {
         'CHARLOTTE',
         'BANKSY',
         'CK',
-        'POOKY',
+        'POOKIE',
       ];
       if (poolsRecord)
         for (const [poolId, poolAmount] of Object.entries(poolsRecord)) {
@@ -497,7 +503,7 @@ export class NestgramController {
         'CHARLOTTE',
         'BANKSY',
         'CK',
-        'POOKY',
+        'POOKIE',
       ];
       const game = await getGameData();
       const parsedPools = game.activePools.map((ac, index) => ({
