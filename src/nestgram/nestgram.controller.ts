@@ -28,7 +28,7 @@ import {
   ownersIds,
   SECRET_BOT_SIGNER,
 } from './env';
-import { UserModel } from 'src/models/user.model';
+import { RaceModel, RaceState, UserModel } from 'src/models/user.model';
 import { connection, getGameData, getTreasurySeed } from './hamsai.helper';
 const base58 = require('base-58');
 
@@ -81,16 +81,13 @@ export class NestgramController {
   }
 
   @OnCommand('new_race')
-  async startMission(message: any, @CommandParams() params: string[]) {
+  async startMission(message: any) {
     if (!ownersIds.some((o) => o === message.message.from?.username)) {
       return 'You are not permitted to execute this command!';
     }
-    const duration = Number(params[0]);
-    if (isNaN(duration)) {
-      return 'Invalid duration format!';
-    }
+
     const { message: responseMessage, signature } =
-      await this.appService.startNewGame(duration);
+      await this.appService.startNewGame(1);
 
     return new MessageSend(responseMessage).next(
       `https://solscan.io/tx/${signature}`,
@@ -212,12 +209,39 @@ export class NestgramController {
     return this.handleExportPk(message.chat.username);
   }
 
+  @OnCommand('race')
+  async handleStartRace(@Message() message: IMessage) {
+    try {
+      if (!ownersIds.some((o) => o === message.from?.username)) {
+        return 'You are not permitted to execute this command!';
+      }
+      const [race] = await RaceModel.find();
+
+      if (race.state != RaceState.Betting) {
+        return new MessageSend(
+          'Race is not in betting mode so it cant be started!',
+        );
+      }
+      race.state = RaceState.Racing;
+      await race.save();
+      return new MessageSend('Race has been started!');
+    } catch (error) {
+      return new MessageSend(error.message);
+    }
+  }
+
   @OnCommand('bet')
   async handleCustomBet(
     @Message() mess: IMessage,
     @CommandParams() commands: string[],
   ) {
     try {
+      const [race] = await RaceModel.find();
+
+      if (race.state !== RaceState.Betting) {
+        return new MessageSend('Betting is not available!');
+      }
+
       const [amount, pool] = commands;
       if (isNaN(+amount) || isNaN(+pool)) {
         return new MessageSend('Invalid params!');
@@ -260,8 +284,34 @@ export class NestgramController {
     }
   }
 
+  @OnCommand('resolve')
+  async resolveBet(
+    @Message() message: IMessage,
+    @CommandParams() params: string[],
+  ) {
+    if (!ownersIds.some((o) => o === message.from?.username)) {
+      return 'You are not permitted to execute this command!';
+    }
+
+    const [pool] = params;
+
+    if (isNaN(Number(pool)) || Number(pool) < 1 || Number(pool) > 5) {
+      return new MessageSend('Invalid pool param!');
+    }
+
+    const response = await this.appService.resolveBet(Number(pool));
+
+    return new MessageSend(response);
+  }
+
   @OnClick(/^bet_/)
   async chooseBetAmount(ctx, @GetAnswer() answer: Answer): Promise<any> {
+    const [race] = await RaceModel.find();
+
+    if (race.state !== RaceState.Betting) {
+      return new MessageSend('Betting is not available!');
+    }
+
     const betInfo = ctx.callback_query.data.split('_');
     if (betInfo.includes('other')) {
       return new MessageSend(

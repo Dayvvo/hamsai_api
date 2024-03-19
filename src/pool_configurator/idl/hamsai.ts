@@ -140,18 +140,17 @@ export type Hamsai = {
           isSigner: false;
         },
         {
-          name: 'recentSlothashes';
-          isMut: false;
-          isSigner: false;
-          docs: ['CHECK'];
-        },
-        {
           name: 'systemProgram';
           isMut: false;
           isSigner: false;
         },
       ];
-      args: [];
+      args: [
+        {
+          name: 'winner';
+          type: 'u8';
+        },
+      ];
     },
   ];
   accounts: [
@@ -241,6 +240,23 @@ export type Hamsai = {
           {
             name: 'poolBet';
             type: 'u16';
+          },
+        ];
+      };
+    },
+    {
+      name: 'RaceState';
+      type: {
+        kind: 'enum';
+        variants: [
+          {
+            name: 'Betting';
+          },
+          {
+            name: 'Racing';
+          },
+          {
+            name: 'Finished';
           },
         ];
       };
@@ -446,18 +462,17 @@ export const IDL: Hamsai = {
           isSigner: false,
         },
         {
-          name: 'recentSlothashes',
-          isMut: false,
-          isSigner: false,
-          docs: ['CHECK'],
-        },
-        {
           name: 'systemProgram',
           isMut: false,
           isSigner: false,
         },
       ],
-      args: [],
+      args: [
+        {
+          name: 'winner',
+          type: 'u8',
+        },
+      ],
     },
   ],
   accounts: [
@@ -547,6 +562,23 @@ export const IDL: Hamsai = {
           {
             name: 'poolBet',
             type: 'u16',
+          },
+        ],
+      },
+    },
+    {
+      name: 'RaceState',
+      type: {
+        kind: 'enum',
+        variants: [
+          {
+            name: 'Betting',
+          },
+          {
+            name: 'Racing',
+          },
+          {
+            name: 'Finished',
           },
         ],
       },

@@ -2,6 +2,7 @@ import { GetState, IMessage, Photo, Service } from 'nestgram';
 import { Keyboard, KeyboardTypes, MessageSend } from 'nestgram';
 import {
   AccountMeta,
+  AddressLookupTableProgram,
   Connection,
   Keypair,
   LAMPORTS_PER_SOL,
@@ -23,21 +24,24 @@ import {
 } from 'src/pool_configurator/pool_configurator.service';
 import * as dayjs from 'dayjs';
 import {
+  authority,
   connection,
   getGameData,
   getPlaceBet,
+  getResolveBetIxs,
   getStartMission,
   getTreasurySeed,
   hamsaiProgram,
   sendAndConfirmTx,
 } from './hamsai.helper';
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { UserModel } from 'src/models/user.model';
+import { Race, RaceModel, RaceState, UserModel } from 'src/models/user.model';
 import * as nacl from 'tweetnacl';
 import { passphrase } from './env';
 import mongoose from 'mongoose';
 import { decode, encode } from 'bs58';
 import { AnchorError } from '@project-serum/anchor';
+import { chunk } from 'lodash';
 config();
 
 @Service()
@@ -62,39 +66,29 @@ export class NestgramService implements OnModuleInit {
     duration: number,
   ): Promise<{ message: string; signature?: string }> {
     try {
-      this.redis = new Redis({
-        host: process.env.REDIS_HOST!,
-        port: parseInt(process.env.REDIS_PORT!),
-        password: process.env.REDIS_PASSWORD!,
-        username: process.env.REDIS_USERNAME!,
-      });
+      let race = await RaceModel.find();
 
-      let game: IGame = JSON.parse(await this.redis.get(this.redisGameKey));
-
-      if (game?.gameStatus === GameStatus.Active) {
-        return {
-          message: `Game is already active and it ends in ${
-            game.endsAt - dayjs().unix()
-          }seconds`,
-        };
+      if (race[0] && race[0].state !== RaceState.Finished) {
+        return { message: 'Previous race was not finished!' };
       }
 
-      if (!game) {
-        game = {
-          createdAt: dayjs().unix(),
-          endsAt: dayjs().unix() + duration,
-          gameStatus: GameStatus.Active,
-          totalBets: 0,
-        };
+      if (!race || race.length === 0) {
+        const newRace = await RaceModel.create({
+          state: RaceState.Betting,
+          updatedAt: new Date(),
+        });
+        race = [newRace];
       }
-      game.createdAt = dayjs().unix();
-      game.endsAt = dayjs().add(duration, 'seconds').unix();
-      game.gameStatus = GameStatus.Active;
+
+      const [r] = race;
+      r.state = RaceState.Betting;
+      r.updatedAt = new Date();
+      await r.save();
+
       const ix = await getStartMission(duration);
 
       const sig = await sendAndConfirmTx([ix]);
       console.log(`Started mission with sig: ${ix}`);
-      await this.redis.set(this.redisGameKey, JSON.stringify(game));
       return { message: 'Mission successfully started', signature: sig };
     } catch (error) {
       this.logger.error(error.message);
@@ -257,6 +251,60 @@ export class NestgramService implements OnModuleInit {
       return { message: 'Successfully withdrawn funds!', success: true, sig };
     } catch (error) {
       return { message: error.message };
+    }
+  }
+
+  async resolveBet(winner: number) {
+    try {
+      const gameData = await getGameData();
+
+      const [race] = await RaceModel.find();
+
+      if (race.state !== RaceState.Racing) {
+        return 'Race is not in proper state!';
+      }
+
+      const instructions = await getResolveBetIxs(winner);
+
+      if (gameData.players.length > 25) {
+        this.logger.verbose(
+          `Found ${gameData.players.length} players,starting init of ALTs`,
+        );
+        const [createAltIx, alt] = AddressLookupTableProgram.createLookupTable({
+          authority: authority.publicKey,
+          payer: authority.publicKey,
+          recentSlot: await connection.getSlot(),
+        });
+        await sendAndConfirmTx([createAltIx]);
+
+        const keys = instructions
+          .map((ix) => ix.keys.map((k) => k.pubkey))
+          .flat();
+
+        const chunked = chunk(keys, 15);
+
+        for (const c of chunked) {
+          const extend = AddressLookupTableProgram.extendLookupTable({
+            addresses: c,
+            authority: authority.publicKey,
+            lookupTable: alt,
+          });
+
+          this.logger.log(`Extended lookup table with ${c.length} accounts!`);
+
+          await sendAndConfirmTx([extend]);
+        }
+      }
+
+      const sig = await sendAndConfirmTx(instructions);
+
+      race.state = RaceState.Finished;
+      await race.save();
+
+      return `Resolved race! \n https://solscan.io/tx/${sig}`;
+    } catch (error) {
+      this.logger.error(error.message);
+      return error.message;
     }
   }
 }

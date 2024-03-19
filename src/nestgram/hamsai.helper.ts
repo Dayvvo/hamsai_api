@@ -80,7 +80,7 @@ export async function getGameData() {
   return game;
 }
 
-export async function getResolveBetIxs() {
+export async function getResolveBetIxs(winningPool: number) {
   const gameData = await getGameData();
 
   const remainingAccounts: AccountMeta[] = gameData.players.map((p) => {
@@ -108,13 +108,12 @@ export async function getResolveBetIxs() {
     .instruction();
 
   const resolveBet = await hamsaiProgram.methods
-    .resolveBet()
+    .resolveBet(winningPool)
     .accounts({
       authority: authority.publicKey,
       gameConfig: getGamePda(),
       globalTreasury: getGlobalTreasuryPda(),
       systemProgram: SystemProgram.programId,
-      recentSlothashes: SYSVAR_RECENT_BLOCKHASHES_PUBKEY,
     })
     .remainingAccounts(remainingAccounts)
     .instruction();
