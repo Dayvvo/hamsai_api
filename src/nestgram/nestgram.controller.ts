@@ -358,6 +358,13 @@ export class NestgramController {
   async showAvailablePools(ctx): Promise<any> {
     // Assuming you have a function to get the current pool amounts
     const poolAmounts = {};
+    const poolsNames: string[] = [
+      'THEO',
+      'CHARLOTTE',
+      'BANKSY',
+      'CK',
+      'POOKIE',
+    ];
     const gameData = await getGameData();
     await Promise.all(
       gameData.activePools.map(async (ac) => {
@@ -370,7 +377,7 @@ export class NestgramController {
     let messageText =
       '🏊‍♂️ Available Pools 🏊‍♀️\nHere are the pools you can join along with the current betting pool amounts:\n\n';
     for (const [poolId, poolAmount] of Object.entries(poolAmounts)) {
-      messageText += `Pool ${poolId}: ${poolAmount}💰\n`;
+      messageText += `${poolsNames[poolId]}: ${poolAmount}💰\n`;
     }
 
     return new MessageSend(messageText);
