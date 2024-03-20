@@ -377,7 +377,8 @@ export class NestgramController {
     let messageText =
       '🏊‍♂️ Available Pools 🏊‍♀️\nHere are the pools you can join along with the current betting pool amounts:\n\n';
     for (const [poolId, poolAmount] of Object.entries(poolAmounts)) {
-      messageText += `${poolsNames[poolId]}: ${poolAmount}💰\n`;
+      const id = Number(poolId) - 1;
+      messageText += `${poolsNames[id.toString()]}: ${poolAmount}💰\n`;
     }
 
     return new MessageSend(messageText);
