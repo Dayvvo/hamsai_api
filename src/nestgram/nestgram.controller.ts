@@ -76,7 +76,8 @@ export class NestgramController {
         .row(2)
         .btn('Available Pools 🎯', 'available_pools')
         .btn('Export private key 🗝', 'export_private_key')
-        .row(2),
+        .row(2)
+        .btn('Balance $', 'balance'),
     );
   }
 
