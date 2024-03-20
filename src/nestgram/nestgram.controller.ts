@@ -82,7 +82,7 @@ export class NestgramController {
 
   @OnCommand('new_race')
   async startMission(message: any, @GetAnswer() answer: Answer) {
-    await answer.send('Creating new race!');
+    await answer.send('Creating new race...');
     if (!ownersIds.some((o) => o === message.message.from?.username)) {
       return 'You are not permitted to execute this command!';
     }
@@ -235,6 +235,7 @@ export class NestgramController {
   async handleCustomBet(
     @Message() mess: IMessage,
     @CommandParams() commands: string[],
+    @GetAnswer() answer: Answer,
   ) {
     try {
       const [race] = await RaceModel.find();
@@ -252,6 +253,7 @@ export class NestgramController {
         return new MessageSend('Invalid Pool!');
       }
 
+      await answer.send('Placing bet...');
       const { message, success, signature, poolsRecord } =
         await this.appService.handlePlaceBet(
           mess.from.username,
@@ -291,7 +293,7 @@ export class NestgramController {
     @CommandParams() params: string[],
     @GetAnswer() answer: Answer,
   ) {
-    await answer.send('Creating new race!');
+    await answer.send('Resolving race...');
 
     if (!ownersIds.some((o) => o === message.from?.username)) {
       return 'You are not permitted to execute this command!';
