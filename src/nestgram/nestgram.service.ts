@@ -303,6 +303,7 @@ export class NestgramService implements OnModuleInit {
 
       return `Resolved race! \n https://solscan.io/tx/${sig}`;
     } catch (error) {
+      console.log(error);
       this.logger.error(error.message);
       return error.message;
     }
