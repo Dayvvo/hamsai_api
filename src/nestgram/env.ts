@@ -10,6 +10,7 @@ export const ownersIds: string[] = [
   'gg97999',
   'itschaz_eth',
   'homerpimpson223',
+  'SMB_256
 ];
 
 export const passphrase = 'hamsai_secret_key_222';
