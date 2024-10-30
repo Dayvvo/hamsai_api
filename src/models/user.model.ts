@@ -1,5 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { Bet } from './bet.model';
+
+@Schema()
+export class UserBet {
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'Bet' })
+  bet: mongoose.Types.ObjectId;
+  @Prop()
+  betAmount: number;
+  @Prop()
+  poolId: number;
+}
 
 @Schema()
 export class User {
@@ -13,6 +24,12 @@ export class User {
   totalBets: number;
   @Prop()
   totalEarnings: number;
+  @Prop()
+  spentFunds: number;
+  @Prop()
+  earnedFunds: number;
+  @Prop({ type: [UserBet] })
+  bets: UserBet[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

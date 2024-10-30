@@ -20,17 +20,6 @@ import { NestgramService } from './nestgram/nestgram.service';
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     ConfigModule.forRoot(),
-    RedisModule.forRootAsync({
-      imports: [ConfigModule.forRoot()],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        return {
-          config: {
-            url: configService.get('REDIS_URL'),
-          },
-        };
-      },
-    }),
     PoolConfiguratorModule,
   ],
   controllers: [AppController],

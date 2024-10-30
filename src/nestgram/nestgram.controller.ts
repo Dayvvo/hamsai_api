@@ -9,6 +9,7 @@ import {
   KeyboardTypes,
   Message,
   MessageSend,
+  MyCommands,
   OnClick,
   OnCommand,
   OnMessage,
@@ -29,7 +30,14 @@ import {
   SECRET_BOT_SIGNER,
 } from './env';
 import { RaceModel, RaceState, UserModel } from 'src/models/user.model';
-import { connection, getGameData, getTreasurySeed } from './hamsai.helper';
+import {
+  connection,
+  getBalance,
+  getGameData,
+  getTreasurySeed,
+} from './hamsai.helper';
+import { BetModel, BetStatus } from 'src/models/bet.model';
+import { bot } from 'src/main';
 const base58 = require('base-58');
 
 /**
@@ -42,10 +50,27 @@ export interface IMyState {
   selectedPool;
 }
 
+export const poolsNames: string[] = [
+  'THEO',
+  'CHARLOTTE',
+  'BANKSY',
+  'CK',
+  'POOKIE',
+];
+
 @Controller()
 export class NestgramController {
   @GetState() state: IMyState;
   constructor(private readonly appService: NestgramService) {}
+
+  @OnCommand('commands')
+  setCommands() {
+    return new MyCommands([
+      { command: 'start', description: 'Start bot' },
+      { command: 'play', description: 'Play game' },
+      { command: 'balance', description: 'Shows current balance' },
+    ]).next('Commands updated');
+  }
 
   @OnCommand('create_wallet')
   async createNewWallet(@Message() message: IMessage) {
@@ -75,25 +100,29 @@ export class NestgramController {
         .btn('Play 🎰', 'play')
         .row(2)
         .btn('Available Pools 🎯', 'available_pools')
-        .btn('Export private key 🗝', 'export_private_key')
+        // .btn('Export private key 🗝', 'export_private_key')
         .row(2)
         .btn('Balance $', 'balance'),
     );
   }
 
   @OnCommand('new_race')
-  async startMission(message: any, @GetAnswer() answer: Answer) {
+  async startMission(
+    @Message() message: IMessage,
+    @GetAnswer() answer: Answer,
+  ) {
     await answer.send('Creating new race...');
-    if (!ownersIds.some((o) => o === message.message.from?.username)) {
+
+    console.log(message.from);
+    if (!ownersIds.some((o) => o === message.from?.username)) {
       return 'You are not permitted to execute this command!';
     }
-
-    const { message: responseMessage, signature } =
-      await this.appService.startNewGame(1);
-
-    return new MessageSend(responseMessage).next(
-      `https://solscan.io/tx/${signature}`,
+    const { message: responseMessage } = await this.appService.startNewGame(
+      message.from.username,
+      1,
     );
+
+    return new MessageSend(responseMessage);
   }
 
   @OnCommand('balance')
@@ -129,7 +158,7 @@ export class NestgramController {
   @OnClick(/^commands/)
   getCommands() {
     const message =
-      '/create_wallet - Creates new wallet! \n/play - Lists available pools for betting. \n /deposit - Shows your where you deposit funds!\n /balance - Shows your current balance \n /available_pools - Shows available pools! \n /withdraw - Sends funds to provided wallet \n /export_private_key - Shows you your private key!';
+      '/create_wallet - Creates new wallet! \n/play - Lists available pools for betting. \n /deposit - Shows your where you deposit funds!\n /balance - Shows your current balance \n /available_pools - Shows available pools! \n';
 
     return new MessageSend(message);
   }
@@ -170,14 +199,6 @@ export class NestgramController {
       return;
     }
 
-    const poolsNames: string[] = [
-      'THEO',
-      'CHARLOTTE',
-      'BANKSY',
-      'CK',
-      'POOKIE',
-    ];
-
     const selectedPool = match[1];
 
     this.state.selectedPool = selectedPool; // Storing selected pool in state
@@ -201,31 +222,13 @@ export class NestgramController {
     );
   }
 
-  @OnCommand('export_private_key')
-  handleExportPkCommand(@Message() message: IMessage) {
-    return this.handleExportPk(message.from.username);
-  }
-
-  @OnClick(/^export_private_key/)
-  handleExportPkBtn(@Message() message: IMessage) {
-    return this.handleExportPk(message.chat.username);
-  }
-
   @OnCommand('race')
   async handleStartRace(@Message() message: IMessage) {
     try {
       if (!ownersIds.some((o) => o === message.from?.username)) {
         return 'You are not permitted to execute this command!';
       }
-      const [race] = await RaceModel.find();
-
-      if (race.state != RaceState.Betting) {
-        return new MessageSend(
-          'Race is not in betting mode so it cant be started!',
-        );
-      }
-      race.state = RaceState.Racing;
-      await race.save();
+      await this.appService.startBet();
       return new MessageSend('Race has been started!');
     } catch (error) {
       return new MessageSend(error.message);
@@ -255,13 +258,11 @@ export class NestgramController {
       }
 
       await answer.send('Placing bet...');
-      const { message, success, signature, poolsRecord } =
-        await this.appService.handlePlaceBet(
-          mess.from.username,
-          +pool,
-          +amount,
-        );
-      const txLink = `https://solscan.io/tx/${signature}`;
+      const { message } = await this.appService.handlePlaceBet(
+        mess.from.username,
+        +pool,
+        +amount,
+      );
 
       let poolsInfo = 'Current pool amounts:\n';
       const poolsNames: string[] = [
@@ -271,17 +272,8 @@ export class NestgramController {
         'CK',
         'POOKIE',
       ];
-      if (poolsRecord)
-        for (const [poolId, poolAmount] of Object.entries(poolsRecord)) {
-          poolsInfo += `Pool ${poolsNames[poolId]}: ${poolAmount}💰\n`;
-        }
-      if (success) {
-        return new MessageSend(
-          `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
-        );
-      } else {
-        return new MessageSend(message);
-      }
+
+      return new MessageSend(message);
     } catch (error) {
       console.log(error);
       return new MessageSend(error.message);
@@ -333,26 +325,25 @@ export class NestgramController {
 
     await answer.send('Placing bet...');
 
-    const { message, success, signature, poolsRecord } =
-      await this.appService.handlePlaceBet(
-        ctx.callback_query.from.username,
-        +selectedPool,
-        +amount,
-      );
-    const txLink = `https://solscan.io/tx/${signature}`;
+    const { message } = await this.appService.handlePlaceBet(
+      ctx.callback_query.from.username,
+      +selectedPool,
+      +amount,
+    );
 
-    let poolsInfo = 'Current pool amounts:\n';
-    if (poolsRecord)
-      for (const [poolId, poolAmount] of Object.entries(poolsRecord)) {
-        poolsInfo += `Pool ${poolId}: ${poolAmount}💰\n`;
-      }
-    if (success) {
-      return new MessageSend(
-        `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
-      );
-    } else {
-      return new MessageSend(message);
-    }
+    return new MessageSend(message);
+
+    // if (poolsRecord)
+    //   for (const [poolId, poolAmount] of Object.entries(poolsRecord)) {
+    //     poolsInfo += `Pool ${poolId}: ${poolAmount}💰\n`;
+    //   }
+    // if (success) {
+    //   return new MessageSend(
+    //     `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
+    //   );
+    // } else {
+    //   return new MessageSend(message);
+    // }
   }
 
   @OnClick(/^available_pools/)
@@ -366,19 +357,22 @@ export class NestgramController {
       'CK',
       'POOKIE',
     ];
-    const gameData = await getGameData();
-    await Promise.all(
-      gameData.activePools.map(async (ac) => {
-        try {
-          const treas = await connection.getBalance(getTreasurySeed(ac.id));
-          poolAmounts[ac.id.toString()] = (treas / LAMPORTS_PER_SOL).toString();
-        } catch (error) {}
-      }),
-    );
+    const bet = await BetModel.findOne({ status: { $ne: BetStatus.Finished } });
+
+    if (bet)
+      poolsNames.forEach((p, index) => {
+        const b = bet.bets?.find((bt) => bt.poolId === index);
+        if (b) {
+          poolAmounts[index] = b.totalSol;
+        } else {
+          poolAmounts[index] = 0;
+        }
+      });
+    else return new MessageSend('No active bet');
     let messageText =
       '🏊‍♂️ Available Pools 🏊‍♀️\nHere are the pools you can join along with the current betting pool amounts:\n\n';
     for (const [poolId, poolAmount] of Object.entries(poolAmounts)) {
-      const id = Number(poolId) - 1;
+      const id = Number(poolId);
       messageText += `${poolsNames[id.toString()]}: ${poolAmount}💰\n`;
     }
 
@@ -477,11 +471,13 @@ export class NestgramController {
         return new MessageSend('You still have not created wallet!');
       }
 
-      const balance =
-        (await connection.getBalance(new PublicKey(user.walletPubkey))) /
-        LAMPORTS_PER_SOL;
+      const balance = await getBalance(user.walletPubkey);
 
-      return new MessageSend(`Balance: ${balance} 💸`);
+      return new MessageSend(
+        `Balance: ${
+          balance - (user.spentFunds ?? 0) + (user.earnedFunds ?? 0)
+        } 💸`,
+      );
     } catch (error) {
       return new MessageSend('Failed to fetch balance!');
     }
@@ -516,41 +512,6 @@ export class NestgramController {
       return new MessageSend(
         'Send command in form /withdraw "WalletString","Amount"\n Example: /withdraw F8Miyagb9XCt13NjKgVBsNRsJNv1sNxL2qHURFXzVNKo,2.25',
       );
-    }
-
-    const {
-      message: responseMessage,
-      sig,
-      success,
-    } = await this.appService.withdrawFunds(
-      message.from.username,
-      +amount,
-      wallet,
-    );
-
-    if (success) {
-      const txLink = `https://solscan.io/tx/${sig}`;
-
-      return new MessageSend(responseMessage).next(txLink);
-    } else {
-      return new MessageSend(responseMessage);
-    }
-  }
-
-  async handleExportPk(@Message() username: string) {
-    try {
-      const user = await UserModel.findOne({ username: username });
-      if (!user) {
-        return new MessageSend(
-          'You still have not created wallet! You can create one with /create_wallet command!',
-        );
-      }
-
-      return new MessageSend(
-        `Your private key is: <b>${user.walletKeypair}</b>`,
-      );
-    } catch (error) {
-      return new MessageSend(error.message);
     }
   }
 

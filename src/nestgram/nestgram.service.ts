@@ -1,54 +1,28 @@
-import { GetState, IMessage, Photo, Service } from 'nestgram';
+import { GetState, Service } from 'nestgram';
 import { Keyboard, KeyboardTypes, MessageSend } from 'nestgram';
 import {
-  AccountMeta,
-  AddressLookupTableProgram,
   Connection,
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
-  SystemProgram,
 } from '@solana/web3.js';
 import * as bs58 from 'bs58';
-import * as path from 'path';
-import { IMyState } from './nestgram.controller';
-import { Hamsai } from 'src/providers/hamsai.provider';
-import { decodeUTF8 } from 'tweetnacl-util';
+import { IMyState, poolsNames } from './nestgram.controller';
 import { config } from 'dotenv';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import Tweetnacl from 'tweetnacl';
-import Redis from 'ioredis';
-import {
-  GameStatus,
-  IGame,
-} from 'src/pool_configurator/pool_configurator.service';
 import * as dayjs from 'dayjs';
-import {
-  authority,
-  connection,
-  getGameData,
-  getPlaceBet,
-  getResolveBetIxs,
-  getStartMission,
-  getTreasurySeed,
-  hamsaiProgram,
-  sendAndConfirmTx,
-} from './hamsai.helper';
 import { Logger, OnModuleInit } from '@nestjs/common';
-import { Race, RaceModel, RaceState, UserModel } from 'src/models/user.model';
-import * as nacl from 'tweetnacl';
-import { passphrase } from './env';
 import mongoose from 'mongoose';
-import { decode, encode } from 'bs58';
-import { AnchorError } from '@project-serum/anchor';
-import { chunk } from 'lodash';
+import { Bet, BetModel, BetStatus, PoolBets } from 'src/models/bet.model';
+import { UserBet, UserModel } from 'src/models/user.model';
+import { getBalance } from './hamsai.helper';
 config();
 
 @Service()
 export class NestgramService implements OnModuleInit {
-  redis: Redis;
+  connection: Connection;
   constructor() {
     this.startNewGame = this.startNewGame.bind(this);
+    this.connection = new Connection(process.env.RPC_CONNECTION!);
   }
   async onModuleInit() {
     await mongoose.connect(process.env.MONGO_URL);
@@ -63,37 +37,32 @@ export class NestgramService implements OnModuleInit {
   redisGameKey = 'HAMSAI_GAME';
 
   async startNewGame(
+    tgHandle: string,
     duration: number,
-  ): Promise<{ message: string; signature?: string }> {
+  ): Promise<{ message: string }> {
     try {
-      let race = await RaceModel.find();
+      const endsAt = dayjs().add(duration, 'seconds').toDate();
+      const existingStartedOrCreatedGame = await BetModel.find({
+        status: { $ne: BetStatus.Finished },
+      });
 
-      if (race[0] && race[0].state !== RaceState.Finished) {
-        return { message: 'Previous race was not finished!' };
+      if (existingStartedOrCreatedGame.length) {
+        throw new Error('There is already started bet you need to resolve!');
       }
 
-      if (!race || race.length === 0) {
-        const newRace = await RaceModel.create({
-          state: RaceState.Betting,
-          updatedAt: new Date(),
-        });
-        race = [newRace];
-      }
+      const newRace = await BetModel.create({
+        createdAt: new Date(),
+        createdBy: tgHandle,
+        endsAt,
+        status: BetStatus.Created,
+      });
 
-      const [r] = race;
-      r.state = RaceState.Betting;
-      r.updatedAt = new Date();
-      await r.save();
-
-      const ix = await getStartMission(duration);
-
-      const sig = await sendAndConfirmTx([ix]);
-      console.log(`Started mission with sig: ${ix}`);
-      return { message: 'Mission successfully started', signature: sig };
+      this.logger.log(`Created new race ${newRace.id.toString()}`);
+      return { message: 'Successfully created new race!' };
     } catch (error) {
       this.logger.error(error.message);
       console.log(error);
-      return { message: 'Failed to start new mission!' };
+      return { message: error.message };
     }
   }
 
@@ -130,182 +99,190 @@ export class NestgramService implements OnModuleInit {
       username: username,
       walletKeypair: secretKey,
       walletPubkey: newWallet.publicKey.toString(),
+      bets: [],
+      earnedFunds: 0,
+      spentFunds: 0,
     });
 
     return new MessageSend(
       `🎉 Your new wallet has been created! 🎉\n\n` +
         `Public Key: \n\`${publicKey}\`\n\n` +
-        `Please send some SOL to this address to start  playing.\n\n` +
-        `🔐 For your security, we will not store your secret key. 🔐\n\n` +
-        `Please make sure to save it securely: \n\n` +
-        `\`\`\`${secretKey}\`\`\``,
+        `Please send some SOL to this address to start  playing.\n\n`,
     );
   }
-  async handlePlaceBet(username: string, betPool: number, betAmonut: number) {
+  async handlePlaceBet(username: string, betPool: number, betAmount: number) {
+    const session = await mongoose.startSession();
+
     try {
+      session.startTransaction();
       const user = await UserModel.findOne({ username });
+      if (!user) throw new Error('User not found!');
 
-      if (!user) {
-        return { message: 'User does not exist!', success: false };
+      const balance = await getBalance(user.walletPubkey);
+
+      const liveRace = await BetModel.findOne({ status: BetStatus.Created });
+
+      if (!liveRace) {
+        throw new Error('No active bet or race already started!');
       }
 
-      const kp = Keypair.fromSecretKey(decode(user.walletKeypair));
-      const gameData = await getGameData();
+      const holdings = balance + user.earnedFunds - user.spentFunds;
+      if (betAmount > holdings)
+        throw new Error(`Not enough funds!Your bet balance is ${holdings} `);
 
-      if (
-        gameData.players.some((p) => p.user.toString() === user.walletPubkey)
-      ) {
-        return {
-          message: 'You already placed bet in this round!',
-          success: false,
-        };
+      if (betPool < 0 || betPool > poolsNames.length) {
+        throw new Error('Invalid pool bet');
       }
 
-      if (gameData.players.length === 250) {
-        return { success: false, message: 'Entries cap reached!' };
-      }
+      const placedBet = user.bets.some((s) => s.bet.equals(liveRace._id));
 
-      console.log(dayjs.unix(gameData.startedAt.toNumber()).toDate());
-      // if (
-      //   dayjs
-      //     .unix(gameData.startedAt.toNumber() + gameData.duration.toNumber())
-      //     .isBefore(dayjs())
-      // ) {
-      //   return { success: false, message: 'Race has ended!' };
-      // }
+      if (placedBet) throw new Error(`You already placed bet!`);
 
-      const placeBetIx = await getPlaceBet(
-        kp.publicKey,
-        betPool,
-        betAmonut * LAMPORTS_PER_SOL,
-      );
-
-      const sig = await sendAndConfirmTx([placeBetIx], [kp]);
-      const poolsRecord = {};
-
-      await Promise.all(
-        gameData.activePools.map(async (p) => {
-          const treasury = getTreasurySeed(p.id);
-          const balance =
-            (await connection.getBalance(treasury)) / LAMPORTS_PER_SOL;
-          poolsRecord[p.id.toString()] = balance.toString();
-        }),
-      );
-
-      return {
-        message: 'Placed bet!',
-        signature: sig,
-        success: true,
-        poolsRecord,
+      const newBet: UserBet = {
+        bet: liveRace._id,
+        betAmount,
+        poolId: betPool,
       };
-    } catch (error) {
-      if (error instanceof AnchorError) {
-        const err: AnchorError = error;
-        return { success: false, message: err.message };
+
+      await UserModel.updateOne(
+        { _id: user._id },
+        { $push: { bets: newBet }, $inc: { spentFunds: betAmount } },
+      );
+
+      const pool = liveRace.bets.findIndex((b) => b.poolId === betPool);
+
+      if (pool >= 0) {
+        await BetModel.updateOne(
+          { _id: liveRace._id },
+          {
+            $inc: {
+              [`bets.${pool}.totalSol`]: betAmount,
+              [`bets.${pool}.totalBets`]: 1,
+            },
+          },
+        );
       } else {
-        if (error.message.includes('0x1774')) {
-          return { success: false, message: 'Race expired' };
-        }
-        return { success: false, message: error.message };
+        const bet: PoolBets = {
+          poolId: betPool,
+          totalBets: 1,
+          totalSol: betAmount,
+        };
+        await BetModel.updateOne(
+          { _id: liveRace._id },
+          { $push: { bets: bet } },
+        );
       }
+
+      await session.commitTransaction();
+      return { message: 'Successfully placed bet' };
+    } catch (error) {
+      session.abortTransaction();
+      return {
+        message: error.message,
+      };
+    } finally {
+      session.endSession();
     }
   }
 
   async withdrawFunds(username: string, amount: number, wallet: string) {
     try {
-      const user = await UserModel.findOne({ username });
-      if (!user) {
-        return { message: 'You dont own any wallet!', success: false };
-      }
-
-      try {
-        new PublicKey(wallet);
-      } catch (error) {
-        return {
-          message:
-            'Invalid wallet! Send command in form /withdraw {wallet} {amount}',
-          success: false,
-        };
-      }
-
-      const kp = Keypair.fromSecretKey(bs58.decode(user.walletKeypair));
-
-      const balance =
-        (await connection.getBalance(kp.publicKey)) / LAMPORTS_PER_SOL;
-      if (balance < amount) {
-        return {
-          success: false,
-          message:
-            'Not enough balance to be withdrawn! Your balance is ' +
-            balance +
-            ' SOL',
-        };
-      }
-      const systemTransfer = SystemProgram.transfer({
-        fromPubkey: kp.publicKey,
-        lamports: amount * LAMPORTS_PER_SOL,
-        programId: SystemProgram.programId,
-        toPubkey: new PublicKey(wallet),
-      });
-      const sig = await sendAndConfirmTx([systemTransfer], [kp]);
-      return { message: 'Successfully withdrawn funds!', success: true, sig };
     } catch (error) {
       return { message: error.message };
     }
   }
 
-  async resolveBet(winner: number) {
+  async startBet() {
     try {
-      const gameData = await getGameData();
+      const bet = await BetModel.findOne({ status: BetStatus.Created });
 
-      const [race] = await RaceModel.find();
+      if (!bet) throw new Error('No created bets!');
 
-      if (race.state !== RaceState.Racing) {
-        return 'Race is not in proper state!';
-      }
+      await BetModel.updateOne(
+        { _id: bet._id },
+        { $set: { status: BetStatus.Started } },
+      );
 
-      const instructions = await getResolveBetIxs(winner);
-
-      if (gameData.players.length > 25) {
-        this.logger.verbose(
-          `Found ${gameData.players.length} players,starting init of ALTs`,
-        );
-        const [createAltIx, alt] = AddressLookupTableProgram.createLookupTable({
-          authority: authority.publicKey,
-          payer: authority.publicKey,
-          recentSlot: await connection.getSlot(),
-        });
-        await sendAndConfirmTx([createAltIx]);
-
-        const keys = instructions
-          .map((ix) => ix.keys.map((k) => k.pubkey))
-          .flat();
-
-        const chunked = chunk(keys, 15);
-
-        for (const c of chunked) {
-          const extend = AddressLookupTableProgram.extendLookupTable({
-            addresses: c,
-            authority: authority.publicKey,
-            lookupTable: alt,
-          });
-
-          this.logger.log(`Extended lookup table with ${c.length} accounts!`);
-
-          await sendAndConfirmTx([extend]);
-        }
-      }
-
-      const sig = await sendAndConfirmTx(instructions);
-
-      race.state = RaceState.Finished;
-      await race.save();
-
-      return `Resolved race! \n https://solscan.io/tx/${sig}`;
+      return 'Successfully started bet!';
     } catch (error) {
-      console.log(error);
-      this.logger.error(error.message);
       return error.message;
+    }
+  }
+
+  async resolveBet(winner: number) {
+    const session = await mongoose.startSession();
+
+    try {
+      session.startTransaction();
+
+      const activeGame = await BetModel.findOne({ status: BetStatus.Started });
+
+      if (!activeGame) throw new Error('There is no active bet!');
+
+      const pool = activeGame.bets.find((p) => p.poolId === winner);
+
+      if (winner < 0 || winner > poolsNames.length)
+        throw new Error('Invalid pool!');
+
+      if (!pool || pool.totalBets === 0) {
+        throw new Error('No bets were made on pool!');
+      }
+
+      const users = await UserModel.find({
+        bets: { $elemMatch: { bet: activeGame._id, poolId: winner } },
+      });
+      if (!users.length) {
+        throw new Error('No bets were made on pool!');
+      }
+
+      const totalSol = activeGame.bets.reduce(
+        (acc, val) => acc + val.totalSol,
+        0,
+      );
+
+      await Promise.all(
+        users.map(async (u) => {
+          try {
+            const bet = u.bets.find(
+              (b) => b.bet.equals(activeGame._id) && b.poolId === winner,
+            );
+
+            if (bet) {
+              const pct =
+                totalSol - bet.betAmount === 0
+                  ? 0
+                  : bet.betAmount / (totalSol - bet.betAmount);
+
+              const toTransfer = bet.betAmount + pct * totalSol;
+
+              await UserModel.updateOne(
+                { _id: u._id },
+                { $inc: { earnedFunds: toTransfer } },
+              );
+            }
+          } catch (error) {}
+        }),
+      );
+
+      await BetModel.updateOne(
+        { _id: activeGame._id },
+        {
+          $set: {
+            winningPool: winner,
+            status: BetStatus.Finished,
+          },
+        },
+      );
+
+      await session.commitTransaction();
+
+      return `Successfully resolved bet!`;
+    } catch (error) {
+      this.logger.error(error.message);
+
+      return error.message;
+    } finally {
+      session.endSession();
     }
   }
 }

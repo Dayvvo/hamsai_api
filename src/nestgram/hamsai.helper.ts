@@ -178,3 +178,23 @@ export async function sendAndConfirmTx(
 
   return txSig;
 }
+
+export async function getBalance(wallet: string): Promise<number> {
+  const mint = new PublicKey(process.env.MINT);
+
+  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+    new PublicKey(wallet),
+    { mint },
+  );
+
+  if (!tokenAccounts.value.length) {
+    return 0;
+  }
+
+  const totalBalance = tokenAccounts.value.reduce(
+    (acc, val) => acc + val.account.data.parsed.info.tokenAmount.uiAmount,
+    0,
+  );
+
+  return totalBalance;
+}

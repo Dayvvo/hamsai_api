@@ -5,9 +5,8 @@ import { NestgramModule } from './nestgram/nestgram.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+export const bot = new NestGram(process.env.NESTGRAM_BOT_KEY!, NestgramModule);
 async function bootstrap() {
-  const bot = new NestGram(process.env.NESTGRAM_BOT_KEY!, NestgramModule);
-
   try {
     await bot.start();
     const app = await NestFactory.create(AppModule);
