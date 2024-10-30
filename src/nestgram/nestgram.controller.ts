@@ -413,7 +413,9 @@ export class NestgramController {
       }
 
       return new MessageSend(
-        `Your wallet address is: <b>${user.walletPubkey}</b>`,
+        `Your wallet address is: \`${user.walletPubkey}\``,
+        undefined,
+        { parse_mode: 'Markdown' },
       );
     } catch (error) {}
   }

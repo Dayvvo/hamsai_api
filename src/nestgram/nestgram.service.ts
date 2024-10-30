@@ -86,7 +86,11 @@ export class NestgramService implements OnModuleInit {
     const user = await UserModel.findOne({ username: username });
 
     if (user) {
-      return 'You already created wallet. Public Key: ' + user.walletPubkey;
+      return new MessageSend(
+        'You already created wallet. Public Key: ' + `\`${user.walletPubkey}\``,
+        undefined,
+        { parse_mode: 'Markdown' },
+      );
     }
 
     const newWallet = Keypair.generate();
@@ -108,6 +112,8 @@ export class NestgramService implements OnModuleInit {
       `🎉 Your new wallet has been created! 🎉\n\n` +
         `Public Key: \n\`${publicKey}\`\n\n` +
         `Please send some SOL to this address to start  playing.\n\n`,
+      undefined,
+      { parse_mode: 'Markdown' },
     );
   }
   async handlePlaceBet(username: string, betPool: number, betAmount: number) {
