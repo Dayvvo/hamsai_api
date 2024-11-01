@@ -305,12 +305,6 @@ export class NestgramController {
 
   @OnClick(/^bet_/)
   async chooseBetAmount(ctx, @GetAnswer() answer: Answer): Promise<any> {
-    const [race] = await RaceModel.find();
-
-    if (race.state !== RaceState.Betting) {
-      return new MessageSend('Betting is not available!');
-    }
-
     const betInfo = ctx.callback_query.data.split('_');
     if (betInfo.includes('other')) {
       return new MessageSend(
