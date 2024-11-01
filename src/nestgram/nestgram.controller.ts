@@ -242,12 +242,6 @@ export class NestgramController {
     @GetAnswer() answer: Answer,
   ) {
     try {
-      const [race] = await RaceModel.find();
-
-      if (race.state !== RaceState.Betting) {
-        return new MessageSend('Betting is not available!');
-      }
-
       const [amount, pool] = commands;
       if (isNaN(+amount) || isNaN(+pool)) {
         return new MessageSend('Invalid params!');
