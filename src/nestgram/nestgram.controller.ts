@@ -241,9 +241,9 @@ export class NestgramController {
     @GetAnswer() answer: Answer,
   ) {
     try {
-      const [race] = await RaceModel.find();
+      const race = await BetModel.findOne({ status: BetStatus.Created });
 
-      if (race.state !== RaceState.Betting) {
+      if (!race) {
         return new MessageSend('Betting is not available!');
       }
 
@@ -259,7 +259,7 @@ export class NestgramController {
       await answer.send('Placing bet...');
       const { message } = await this.appService.handlePlaceBet(
         mess.from.username,
-        +pool,
+        +pool - 1,
         +amount,
       );
 
