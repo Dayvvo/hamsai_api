@@ -9,6 +9,7 @@ export const bot = new NestGram(process.env.NESTGRAM_BOT_KEY!, NestgramModule);
 async function bootstrap() {
   try {
     await bot.start();
+    //TODO: move to webhook mode for production
     const app = await NestFactory.create(AppModule);
     await app.listen(3000);
   } catch (error) {

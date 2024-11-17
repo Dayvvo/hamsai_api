@@ -225,21 +225,12 @@ export class NestgramService implements OnModuleInit {
 
       if (!activeGame) throw new Error('There is no active bet!');
 
-      const pool = activeGame.bets.find((p) => p.poolId === winner);
-
       if (winner < 0 || winner > poolsNames.length)
         throw new Error('Invalid pool!');
-
-      if (!pool || pool.totalBets === 0) {
-        throw new Error('No bets were made on pool!');
-      }
 
       const users = await UserModel.find({
         bets: { $elemMatch: { bet: activeGame._id, poolId: winner } },
       });
-      if (!users.length) {
-        throw new Error('No bets were made on pool!');
-      }
 
       const totalSol = activeGame.bets.reduce(
         (acc, val) => acc + val.totalSol,

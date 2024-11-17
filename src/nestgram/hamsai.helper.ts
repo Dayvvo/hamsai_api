@@ -29,9 +29,8 @@ export const hamsaiProgram = new Program<HamsaiType>(
 export const hamsaiSeed = Buffer.from('hamsai');
 export const globalSeed = Buffer.from('global');
 
-export const authority = Keypair.fromSecretKey(
-  decode(process.env.AUTHORITY_KEY!),
-);
+//make sure to set here Keypair.generate() instead of loading keypair from env!!
+export const authority = Keypair.generate();
 
 export function getGamePda() {
   return PublicKey.findProgramAddressSync(

@@ -94,7 +94,6 @@ export class NestgramController {
         .btn('Create Wallet 💼', 'create_wallet')
         .row(2)
         .btn('Deposit 💰', 'deposit')
-        .btn('Withdraw 💸', 'withdraw')
         .row(2)
         .btn('My Wallet 💳', 'my_wallet')
         .btn('Play 🎰', 'play')
@@ -242,6 +241,12 @@ export class NestgramController {
     @GetAnswer() answer: Answer,
   ) {
     try {
+      const [race] = await RaceModel.find();
+
+      if (race.state !== RaceState.Betting) {
+        return new MessageSend('Betting is not available!');
+      }
+
       const [amount, pool] = commands;
       if (isNaN(+amount) || isNaN(+pool)) {
         return new MessageSend('Invalid params!');
@@ -288,7 +293,7 @@ export class NestgramController {
 
     const [pool] = params;
 
-    if (isNaN(Number(pool)) || Number(pool) < 1 || Number(pool) > 5) {
+    if (isNaN(Number(pool)) || Number(pool) < 0 || Number(pool) > 5) {
       return new MessageSend('Invalid pool param!');
     }
 
@@ -299,6 +304,12 @@ export class NestgramController {
 
   @OnClick(/^bet_/)
   async chooseBetAmount(ctx, @GetAnswer() answer: Answer): Promise<any> {
+    const race = await BetModel.findOne({ status: BetStatus.Created });
+
+    if (!race?.status) {
+      return new MessageSend('Betting is not available!');
+    }
+
     const betInfo = ctx.callback_query.data.split('_');
     if (betInfo.includes('other')) {
       return new MessageSend(
@@ -369,11 +380,11 @@ export class NestgramController {
 
   @OnClick(/^poolI_/)
   async showPoolDetails(ctx): Promise<any> {
-    // const poolId = ctx.callback_query.data.split('_')[1];
+    const poolId = ctx.callback_query.data.split('_')[1];
 
-    const poolDetails = await this.getPoolDetails(2);
+    const poolDetails = await this.getPoolDetails(poolId);
 
-    let messageText = `🏊‍♂️ Pool ${2} Details 🏊‍♀️\n\n`;
+    let messageText = `🏊‍♂️ Pool ${poolId} Details 🏊‍♀️\n\n`;
     messageText += `Current Amount: ${poolDetails.amount}💰\n`;
     messageText += `Number of Participants: ${poolDetails.participants}\n`;
     messageText += `Minimum Bet: ${poolDetails.minBet}\n`;
@@ -417,9 +428,6 @@ export class NestgramController {
 
     const [, selectedPool, amount] = betInfo;
 
-    // Use static content for the Solscan transaction link for demonstration purposes
-    const txLink = 'https://solscan.io/transaction/EXAMPLE123';
-
     // Use static content for the pool amounts as well
     const poolAmounts = {
       '1': '100',
@@ -433,9 +441,7 @@ export class NestgramController {
       poolsInfo += `Pool ${poolId}: ${poolAmount}💰\n`;
     }
 
-    return new MessageSend(
-      `Your bet has been successfully placed.\n\nSolscan tx link: ${txLink}\n`,
-    );
+    return new MessageSend(`Your bet has been successfully placed.`);
   }
   @OnCommand('')
   generalCommand() {
@@ -445,13 +451,6 @@ export class NestgramController {
   @OnText('')
   generalMessage() {
     return '';
-  }
-
-  async processBetAndGetTxLink(pool, amount, userId) {
-    // Process the bet here (not shown)
-    // Generate and return the Solscan transaction link
-    const txLink = 'https://solscan.io/tx/yourTransactionId'; // Placeholder link
-    return txLink;
   }
 
   async getBalance(@Message() username: string) {
@@ -474,11 +473,17 @@ export class NestgramController {
   }
 
   async getPoolDetails(poolId) {
+    const bet = await BetModel.findOne({ status: BetStatus.Created });
+
+    if (!bet) throw new Error('No created bet!');
+
+    const pool = bet.bets.find((b) => b.poolId === poolId);
+
     // Fetch and return details for the specified pool from your database or backend
     // This is a placeholder implementation. You'll need to replace it with actual data retrieval logic.
     return {
-      amount: '200',
-      participants: 10,
+      amount: pool.totalSol,
+      participants: pool.totalBets,
       minBet: '0.05',
       maxBet: '2.00',
     };
@@ -523,19 +528,14 @@ export class NestgramController {
         'CK',
         'POOKIE',
       ];
-      const game = await getGameData();
-      const parsedPools = game.activePools.map((ac, index) => ({
-        name: `${poolsNames[index]}`,
-        id: `pool_${ac.id}`,
-      }));
 
       const message = new MessageSend(
         'Choose a pool to bet in:',
         new Keyboard(KeyboardTypes.underTheMessage),
       );
 
-      parsedPools.forEach((pp, index) => {
-        message.keyboard.btn(pp.name, pp.id);
+      poolsNames.forEach((pp, index) => {
+        message.keyboard.btn(pp, `pool_${index.toString()}`);
         if (index % 2 !== 0) {
           message.keyboard.row(2);
         }
